@@ -248,7 +248,12 @@ int write_char(char c) {
             return 1; // more than 128 is supported but not yet loaded into fontmap
         }
 
-        char font[8] = font_map[c];
+        char font[8];
+        
+        for (int i = 0;i < 8;i++) {
+            font[i] = font_map[c][i];
+        }
+
         for (int i = 0;i < 7;i++) {
             memory[A + ROW_CHAR_SIZE * i + col] = font[i];
         }
