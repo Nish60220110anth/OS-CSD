@@ -1,0 +1,14 @@
+   ***  
+    **  
+    **  
+ *****  
+**  **  
+**  **  
+ *** ** 
+
+
+/**
+  each character => 8 bytes ( one byte in each column)
+  so line => 320 bytes
+  
+*/
