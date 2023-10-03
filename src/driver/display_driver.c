@@ -348,7 +348,12 @@ int clear_stored() {
 }
 
 int set_fontmap(char* filename, int len) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        return 1;
+    }
 
+    // TODO: check if the file is valid and set the fontmap accordingly
     return 0;
 }
 
