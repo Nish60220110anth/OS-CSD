@@ -7,7 +7,8 @@ clean:
 	@rm --recursive ./build
 
 execute:
-	@cd ./build && make && ./$(FILE)
+	# @cd ./build && make && ./$(FILE)
+	@cd ./build && make
 
 init:
 	@mkdir  build
