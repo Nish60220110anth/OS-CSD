@@ -83,42 +83,5 @@ int map_test(int _cases) {
 }
 
 int main(int argc, char* argv[]) {
-    // int type;
-    // fscanf(stdin, "%d", &type);
-
-    // int32_t* ptr = NULL;
-    // int32_t size = 0;
-
-    // bool isend = false;
-
-    // while (true) {
-    //     if (!isend) {
-    //         break;
-    //     }
-
-    //     switch (type) {
-    //     case 1: {
-    //         // print the present condition of our heap
-    //         break;
-    //     }
-
-    //     case 2: {
-    //         // take another input regarding the size of the memory block to allocate, also print the unique id
-    //         fscanf(stdin, "%d", &size);
-    //         break;
-    //     }
-
-    //     case 3: {
-    //         // free the memory
-    //         break;
-    //     }
-
-    //     case 4: {
-    //         // end the program
-    //         isend = true;
-    //         break;
-    //     }
-    //     }
-    // }
-
+    map_test(15);
 }
