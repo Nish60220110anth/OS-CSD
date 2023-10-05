@@ -1,9 +1,9 @@
 #ifndef INTERNAL_HEAP 
 #define INTERNAL_HEAP
 
-int alloc_last = 0, free_last = 0; // tag id's
+int proc_last = 0, free_last = 0; // tag id's
 int last_address = 0; // this is address size that free blocks are using 
-// remember to use this address with the base address
+// remember to use this address with the base address of the heap
 
 struct free_block {
     int address; // initial location of the address of the block
