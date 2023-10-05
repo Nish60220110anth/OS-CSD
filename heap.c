@@ -107,9 +107,12 @@ struct free_block* _free_block_finder(struct free_block* free_head, int size) {
 }
 
 /**
- * \brief allocates size in free block
- *
- * \note return address(>=0) if successful, (<0) else fail
+ * \brief allocates size in free block for a process
+ * \param free_head the head of the free list
+ * \param size the size of the block to be allocated
+ * 
+ * \returns the address of the block if successful, -1 else
+ * \note best fit algorithm is used
 */
 int free_block_alloc(struct free_block* free_head, int size) {
     struct free_block* _alloted_block = _free_block_finder(free_head, size);
@@ -127,6 +130,15 @@ int free_block_alloc(struct free_block* free_head, int size) {
     return address;
 }
 
+/**
+ * \brief deallocates size in free block by a process
+ * 
+ * \param free_head the head of the free list
+ * \param tag the tag of the block to be deallocated
+ * \param size the amount of size to be deallocated
+ * 
+ * \returns 0 if successful, 1 else
+*/
 int free_block_dealloc(struct free_block* free_head, int tag, int size) {
     if (free_head == 0) return 1;
 
@@ -146,6 +158,14 @@ int free_block_dealloc(struct free_block* free_head, int tag, int size) {
     return 0;
 }
 
+/**
+ * \brief returns the free block with given tag
+ * 
+ * \param free_head the head of the free list
+ * \param tag the tag of the block to be returned
+ * 
+ * \returns the free block if successful, 0 else
+*/
 struct free_block* free_block_at(struct free_block* free_head, int tag) {
     if (free_head == 0) return 0;
 
@@ -159,6 +179,12 @@ struct free_block* free_block_at(struct free_block* free_head, int tag) {
     return pre;
 }
 
+/**
+ * \brief returns the number of free blocks
+ * 
+ * \param free_head the head of the free list
+ * \returns the number of free blocks
+*/
 int free_block_length(struct free_block* free_head) {
     if (free_head == 0) return 0;
     int c = 0;
