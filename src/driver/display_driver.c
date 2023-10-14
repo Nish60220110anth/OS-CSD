@@ -56,7 +56,10 @@
 #endif
 
 char memory[TOTAL_SIZE + 1];
+
+// current path in the OS
 char path[128];
+
 char font_map[128][8] = {
     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0000 (nul)
     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // U+0001
@@ -228,7 +231,7 @@ int write_string(char* msg, int len) {
     return 0;
 }
 
-int write_string_at() {
+int write_string_at(char* msg, int line, int col) {
 
     return 0;
 }
@@ -249,7 +252,7 @@ int write_char(char c) {
         }
 
         char font[8];
-        
+
         for (int i = 0;i < 8;i++) {
             font[i] = font_map[c][i];
         }
@@ -285,19 +288,68 @@ int write_char(char c) {
 }
 
 int write_char_at(char c, int line, int col) {
+    if (SCREEN_LOCK == 0) {
+        int A = DISPLAY_BASE + ROW_CHAR_SIZE * 8 * line;
+        if (c < 0 || c > 128) {
+            return 1; // more than 128 is supported but not yet loaded into fontmap
+        }
 
+        char font[8];
+
+        for (int i = 0;i < 8;i++) {
+            font[i] = font_map[c][i];
+        }
+
+        for (int i = 0;i < 7;i++) {
+            memory[A + ROW_CHAR_SIZE * i + col] = font[i];
+        }
+
+        return 0;
+    }
+
+    return 1;
 }
 
 
-// todo: functionality to scroll up the visible content 
+/**
+ * \brief Shifts the entire display map by one 1 unit upwards
+*/
 int display_up() {
-    return 0;
+    if (SCREEN_LOCK == 0) {
+        int A = DISPLAY_BASE + ROW_CHAR_SIZE * 8 * 1;
+        for (int i = 0;i < DISPLAY_SIZE - ROW_CHAR_SIZE * 8;i++) {
+            memory[DISPLAY_BASE + i] = memory[A + i];
+        }
+
+        for (int i = DISPLAY_SIZE - ROW_CHAR_SIZE * 8;i < DISPLAY_SIZE;i++) {
+            memory[DISPLAY_BASE + i] = 0;
+        }
+
+        return 0;
+    }
+
+    return 1;
 }
 
-// todo: functionality to scroll down the visible content 
+/**
+ * \brief Shifts the entire display map by one 1 unit downwards
+ * 
+*/
 int display_down() {
+    if (SCREEN_LOCK == 0) {
+        int A = DISPLAY_BASE + ROW_CHAR_SIZE * 8 * 1;
+        for (int i = DISPLAY_SIZE - ROW_CHAR_SIZE * 8;i >= 0;i--) {
+            memory[DISPLAY_BASE + i] = memory[A + i];
+        }
 
-    return 0;
+        for (int i = 0;i < ROW_CHAR_SIZE * 8;i++) {
+            memory[DISPLAY_BASE + i] = 0;
+        }
+
+        return 0;
+    }
+
+    return 1;
 }
 
 // reset the entire display
@@ -307,7 +359,9 @@ void clear_screen() {
     }
 }
 
-// 
+/**
+ * \brief Display 
+*/
 int display_terminal() {
     clear_screen();
     return 0;

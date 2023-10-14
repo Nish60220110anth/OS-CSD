@@ -62,7 +62,23 @@ void memory_free(uint8_t* mem) {
  * \return Pointer to allocated memory.
 */
 uint8_t* memory_alloc(uint16_t size) {
-    
+    /**
+     *  1 - 1000
+     * 
+     *  |heap table segment|actual heap|
+     *  start  1 , 50
+     *  start  59, 111
+     *   51 - 162 ?
+     *  
+     * 
+     *  ex: 1 - 50 , 59 - 169 occupied
+     * 
+     *  10 segments ? 
+     *  
+    */
 }
+
+// 1) whether struct is supported ?
+//  
 
 #endif // MEMORY_H

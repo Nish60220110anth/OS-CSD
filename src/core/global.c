@@ -4,7 +4,8 @@
  * structure:
  * 
  * | data segment | text segment | stack segment | 
- * | io display | io keyoard | heap table | heap segment | tmp segment |
+ * | io display | io keyboard | heap table | heap segment | tmp segment |
+ * 
 */
 
 #define MEM_SIZE 1024 * 64

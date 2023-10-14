@@ -72,9 +72,15 @@ struct keyboard_driver_input keyboard_driver_get_input() {
             input = memory[IO_KEYBOARD_START];
 
             if (input == CTRL_CODE_CTRL) {
+                label:
                 for (uint8_t i = 0; i < KEYBOARD_WAIT_TIME; i++) {
                     if (memory[IO_KEYBOARD_START] != 0) {
                         second_input = memory[IO_KEYBOARD_START];
+
+                        if(second_input <= 17 && second_input >= 13) {
+                            goto label;
+                        }
+
                         useful_key = true;
                         can_break = true;
                         break;
