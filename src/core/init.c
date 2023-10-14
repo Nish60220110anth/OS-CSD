@@ -15,12 +15,8 @@
 /**
  * \brief Initializes the kernel.
 */
-void init() {
-    // Initialize memory
-    memory_init(memory, MEM_SIZE);
+void _init() {
 
-    // Initialize registers
-    register_init();
 }
 
 #endif

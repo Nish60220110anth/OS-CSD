@@ -13,26 +13,23 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "core/global.c"
-#include "core/memory.c"
+#include "core/global.h"
+#include "core/memory.h"
 
 
 struct keyboard_driver_input {
     uint8_t primary_input;
     uint8_t secondary_input;
-    bool can_use;
-} keyboard_driver_input;
+} *keyboard_driver_input;
 
 void keyboard_driver_input_init(struct keyboard_driver_input* input) {
     input->primary_input = 0;
     input->secondary_input = 0;
-    input->can_use = false;
 }
 
-void keyboard_driver_input_set(struct keyboard_driver_input* input, uint8_t primary_input, uint8_t secondary_input, bool can_use) {
+void keyboard_driver_input_set(struct keyboard_driver_input* input, uint8_t primary_input, uint8_t secondary_input) {
     input->primary_input = primary_input;
     input->secondary_input = secondary_input;
-    input->can_use = can_use;
 }
 
 /**
@@ -40,7 +37,11 @@ void keyboard_driver_input_set(struct keyboard_driver_input* input, uint8_t prim
 */
 void keyboard_driver_init() {
     memory_set(memory + IO_KEYBOARD_START, IO_KEYBOARD_SIZE, 0);
-    // keyboard_driver_input_init(&keyboard_driver_input);
+    int start = IO_KEYBOARD_START;
+    int end = IO_KEYBOARD_START + IO_KEYBOARD_SIZE;
+    for (int i = start;i < end;i++) {
+        mwrite('\0', i);
+    }
 }
 
 /**
@@ -59,212 +60,85 @@ void keyboard_driver_init() {
 struct keyboard_driver_input keyboard_driver_get_input() {
     uint8_t second_input = 0;
     uint8_t input = 0;
-    bool useful_key = false;
     bool can_break = false;
 
-    keyboard_driver_input_init(&keyboard_driver_input);
+    keyboard_driver_input_init(keyboard_driver_input);
 
     while (true) {
-        useful_key = false;
         can_break = false;
 
-        if (memory[IO_KEYBOARD_START] != 0) {
-            input = memory[IO_KEYBOARD_START];
-
-            if (input == CTRL_CODE_CTRL) {
-                label:
-                for (uint8_t i = 0; i < KEYBOARD_WAIT_TIME; i++) {
-                    if (memory[IO_KEYBOARD_START] != 0) {
-                        second_input = memory[IO_KEYBOARD_START];
-
-                        if(second_input <= 17 && second_input >= 13) {
-                            goto label;
-                        }
-
-                        useful_key = true;
+        char f = mread_char(IO_KEYBOARD_START);
+        if (f != 0) {
+            input = f;
+            switch (f) {
+            case CTRL_CODE_ALT: {
+                for (int i = 0;i < KEYBOARD_WAIT_TIME;i++) {
+                    char f = mread_char(IO_KEYBOARD_START);
+                    if (f != 0) {
+                        second_input = f;
                         can_break = true;
                         break;
                     }
                 }
-
-                if (can_break) break;
+                break;
             }
-            // when we press shift, we try to return the shifted value
-            // if we press shift and a, we return A
-            // if we press shift and 1, we return !
-            // and if press ', we change it to " and also the primary input to "
-            // but we only press ', we return ' and not " in both primary and secondary input
-            else if (input == CTRL_CODE_SHIFT) {
-                for (uint8_t i = 0; i < KEYBOARD_WAIT_TIME; i++) {
-                    if (memory[IO_KEYBOARD_START] != 0) {
-                        second_input = memory[IO_KEYBOARD_START];
 
-                        if (second_input >= 97 && second_input <= 122) {
-                            second_input -= 32; // A - Z
-                            input = 0;
-                            useful_key = true;
-                            break;
-                        }
-                        else if (second_input >= 65 && second_input <= 90) {
-                            second_input += 32; // a - z
-                            input = 0;
-                            useful_key = true;
-                            break;
-                        }
-                        else if (second_input >= 48 && second_input <= 57) {
-                            switch (second_input) {
-                            case 48:
-                                second_input = 41; // )
-                                break;
-                            case 49:
-                                second_input = 33; // !
-                                break;
-                            case 50:
-                                second_input = 64; // @
-                                break;
-                            case 51:
-                                second_input = 35; // #
-                                break;
-                            case 52:
-                                second_input = 36; // $
-                                break;
-                            case 53:
-                                second_input = 37; // %
-                                break;
-                            case 54:
-                                second_input = 94; // ^
-                                break;
-                            case 55:
-                                second_input = 38; // &
-                                break;
-                            case 56:
-                                second_input = 42; // *
-                                break;
-                            case 57:
-                                second_input = 40; // (
-                                break;
-                            default:
-                                break;
-                            }
-
-                            useful_key = true;
-                            input = 0;
-                        }
-                        else if (second_input == 96) {
-                            second_input = 126; // ~
-                            input = 0;
-                            useful_key = true;
-                            break;
-                        }
-                        else if (second_input == 45) {
-                            second_input = 95; // _
-                            input = 0;
-                            useful_key = true;
-                            break;
-                        }
-                        else if (second_input == 61) {
-                            second_input = 43; // +
-                            input = 0;
-                            useful_key = true;
-                            break;
-                        }
-                        else if (second_input >= 91 && second_input <= 93) {
-                            switch (second_input) {
-                            case 91:
-                                second_input = 123; // {
-                                break;
-                            case 92:
-                                second_input = 124; // |
-                                break;
-                            case 93:
-                                second_input = 125; // }
-                                break;
-                            default:
-                                break;
-                            }
-                            input = 0;
-                            useful_key = true;
-                            break;
-                        }
-                        else if (second_input == 59) {
-                            second_input = 58; // :
-                            input = 0;
-                            useful_key = true;
-                            break;
-                        }
-                        else if (second_input == 39) {
-                            second_input = 34; // "
-                            input = second_input;
-                            useful_key = true;
-                            break;
-                        }
-                        else if (second_input == 44) {
-                            second_input = 60; // <
-                            input = 0;
-                            useful_key = true;
-                            break;
-                        }
-                        else if (second_input == 46) {
-                            second_input = 62; // >
-                            input = 0;
-                            useful_key = true;
-                            break;
-                        }
-                        else if (second_input == 47) {
-                            second_input = 63; // ?
-                            input = 0;
-                            useful_key = true;
-                            break;
-                        }
-                        else {
-                            second_input = input;
-                            input = 0;
-                            useful_key = false;
-                            break;
-                            // the secondary input is not a valid input
-                        }
-                    } // all cases are handled if primary input is shift
-                }
-
-                if (!useful_key) {
-                    //  we waited for 5 count and still no input for shift
-                    // so change secondary input to primary input
-                    // only shift is sent as output
-                    second_input = input;
-                    input = 0;
-                }
-
-            }
-            else if (input == CTRL_CODE_ALT) {
-                for (uint8_t i = 0; i < KEYBOARD_WAIT_TIME; i++) {
-                    if (memory[IO_KEYBOARD_START] != 0) {
-                        second_input = memory[IO_KEYBOARD_START];
-                        useful_key = true;
+            case CTRL_CODE_CTRL: {
+                for (int i = 0;i < KEYBOARD_WAIT_TIME;i++) {
+                    char f = mread_char(IO_KEYBOARD_START);
+                    if (f != 0) {
+                        second_input = f;
+                        can_break = true;
                         break;
                     }
                 }
+                break;
+            }
 
-                if (!useful_key) {
-                    second_input = input;
-                    input = 0;
+            case CTRL_CODE_SHIFT: {
+                for (int i = 0;i < KEYBOARD_WAIT_TIME;i++) {
+                    char f = mread_char(IO_KEYBOARD_START);
+                    if (f != 0) {
+                        second_input = f;
+                        can_break = true;
+                        break;
+                    }
                 }
+                break;
             }
-            else {
-                // if the primary input is not ctrl, alt, shift, etc.
-                // this can be either a alphabet or a number or a symbol
-                // so we can return the input immediately
-                second_input = input;
-                input = 0;
-                useful_key = true;
+
+            case CTRL_CODE_CAPSLOCK: {
                 can_break = true;
+                break;
             }
-            
-            memory[IO_KEYBOARD_START] = 0;
+
+            case CTRL_CODE_BACKSPACE: {
+                can_break = true;
+                break;
+            }
+
+            case CTRL_CODE_ENTER: {
+                can_break = true;
+                break;
+            }
+
+            default: {
+                input = f;
+                can_break = true;
+                break;
+            }
+            }
         }
+
+        if (can_break) break;
     }
 
-    keyboard_driver_input_set(&keyboard_driver_input, input, second_input, useful_key);
-    return keyboard_driver_input;
+    // check whether both keys are valid non zero keys
+    keyboard_driver_input_set(keyboard_driver_input, input, second_input);
+    return *keyboard_driver_input;
 }
+
+// todo: write another function that take manipulate the inputs taken from 
+// the keyboard
 
 #endif // KEYBOARD_DRIVER_H

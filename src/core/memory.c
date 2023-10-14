@@ -1,40 +1,68 @@
-/**
- * \brief Memory module consists of functions for memory management.
- * Functiolaity includes memory initialization, copying, setting, allocation and freeing.
-*/
-
-#ifndef MEMORY_H
-#define MEMORY_H
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 
-#include "global.c"
+#include "global.h"
+#include "memory.h"
 
-char* memory[MEM_SIZE];
-
-/**
- * \brief Initializes memory.
- * \param mem Pointer to memory.
- * \param size Size of memory.
-*/
-void memory_init(uint8_t* mem, uint16_t size) {
-    for (uint16_t i = 0; i < size; i++) {
-        mem[i] = 0;
+// char => to bits 
+void __load_char_as_bits(char c, char* out) {
+    int g = c;
+    for (int i = 0; i < 8;i++) {
+        out[7 - i] = (g & 1) + '0';
+        g >>= 1;
     }
 }
 
-/**
- * \brief Copies memory.
- * \param dest Destination memory.
- * \param src Source memory.
- * \param size Size of memory.
-*/
-void memory_copy(uint8_t* dest, uint8_t* src, uint16_t size) {
-    for (uint16_t i = 0; i < size; i++) {
-        dest[i] = src[i];
-    }
+// read a single character from file
+// note: the file is a text file, so we need to convert the char to bits in out
+void mread(int addr, char* out) {
+
+    assert(addr >= 0 && addr < MEMORY_SIZE);
+    fseek(fp, addr * 9, SEEK_SET);
+    fread(out, sizeof(char), 9, fp);
+
+    // assert(out[8] == '\n');
 }
 
+char mread_char(int addr) {
+    char out[9];
+    mread(addr, out);
 
-#endif // MEMORY_H
+    char g;
+    for (int i = 0;i < 8;i++) {
+        g <<= 1;
+        g |= out[i] - '0';
+    }
+
+    return g;
+}
+
+void mwrite(char c, int addr) {
+    assert(addr >= 0 && addr < MEMORY_SIZE);  // check if addr is valid
+    fseek(fp, addr * 9, SEEK_SET);
+    char line[9];
+    line[8] = '\n';
+    __load_char_as_bits(c, line);
+    fwrite(line, sizeof(char), 9, fp);
+    fflush(fp);
+}
+
+/**
+ * @brief initialize the memory. just create a memory file filled with zeroes
+ *
+*/
+void minit() {
+    fp = fopen(filename, "rw+");
+    for (int i = 0;i < MEMORY_SIZE;i++) {
+        char line[9];
+        line[8] = '\n';
+        __load_char_as_bits(0, line);
+
+        fwrite(line, sizeof(char), 9, fp);
+    }
+}

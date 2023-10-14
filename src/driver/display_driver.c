@@ -55,6 +55,9 @@
 #define TOTAL_SIZE 10
 #endif
 
+#include "core/memory.h"
+#include "core/global.h"
+
 char memory[TOTAL_SIZE + 1];
 
 // current path in the OS
@@ -214,6 +217,7 @@ int COLUMN = 0;
 
 // prototypes
 int write_char(char c);
+int write_char_at(char c, int line, int col);
 
 /**
  * @brief write string array in to the display location currently at.
@@ -231,8 +235,27 @@ int write_string(char* msg, int len) {
     return 0;
 }
 
-int write_string_at(char* msg, int line, int col) {
+int write_string_at(char* msg, int len, int line, int col) {
+    int g = 0;
+    for (int i = 0;i < len;i++) {
+        g = write_char_at(msg[i], line, col);
+        if (g != 0) {
+            return g;
+        }
 
+        col++;
+        if (col == ROW_CHAR_SIZE) {
+            col = 0;
+            line += 8;
+        }
+
+        if (line == 8 * COLUMN_CHAR_SIZE) {
+            line = 0;
+            col = 0;
+
+            return 1;
+        }
+    }
     return 0;
 }
 
@@ -242,46 +265,30 @@ int write_string_at(char* msg, int line, int col) {
  * @returns 1 if not able to write else 0
 */
 int write_char(char c) {
+    // use write and read from mem.c
     if (SCREEN_LOCK == 0) {
-        int line = LINE;
-        int col = COLUMN;
-
-        int A = DISPLAY_BASE + ROW_CHAR_SIZE * 8 * line;
-        if (c < 0 || c > 128) {
-            return 1; // more than 128 is supported but not yet loaded into fontmap
-        }
-
         char font[8];
-
         for (int i = 0;i < 8;i++) {
             font[i] = font_map[c][i];
         }
 
+        int A = DISPLAY_BASE + ROW_CHAR_SIZE * LINE + COLUMN; // location of the first character in the line
         for (int i = 0;i < 7;i++) {
-            memory[A + ROW_CHAR_SIZE * i + col] = font[i];
+            mwrite(A + ROW_CHAR_SIZE * i, font[i]);
         }
 
-        if (col == ROW_CHAR_SIZE - 1) {
-            // col is at last column already and now it wrote the last column, so wrap 
-            // to next line
-            col = 0;
-            line += 8;
-        }
-        else {
-            col++;
+        COLUMN++;
+        if (COLUMN == ROW_CHAR_SIZE) { // if the line is full
+            COLUMN = 0;
+            LINE += 8;
         }
 
-        if (line >= 160) {
-            // 160 is the final row of display
-            // after this, we need to use extra memory to save the screen content and load 
-            // it accordingly
-            line = 0;
+        if (LINE == 8 * COLUMN_CHAR_SIZE) {// if the screen is full
+            LINE = 0;
+            COLUMN = 0;
+
+            return 1;
         }
-
-        COLUMN = col;
-        LINE = line;
-
-        return 0;
     }
 
     return 1;
@@ -289,22 +296,15 @@ int write_char(char c) {
 
 int write_char_at(char c, int line, int col) {
     if (SCREEN_LOCK == 0) {
-        int A = DISPLAY_BASE + ROW_CHAR_SIZE * 8 * line;
-        if (c < 0 || c > 128) {
-            return 1; // more than 128 is supported but not yet loaded into fontmap
-        }
-
         char font[8];
-
         for (int i = 0;i < 8;i++) {
             font[i] = font_map[c][i];
         }
 
+        int A = DISPLAY_BASE + ROW_CHAR_SIZE * line + col; // location of the first character in the line
         for (int i = 0;i < 7;i++) {
-            memory[A + ROW_CHAR_SIZE * i + col] = font[i];
+            mwrite(A + ROW_CHAR_SIZE * i, font[i]);
         }
-
-        return 0;
     }
 
     return 1;
@@ -316,13 +316,14 @@ int write_char_at(char c, int line, int col) {
 */
 int display_up() {
     if (SCREEN_LOCK == 0) {
-        int A = DISPLAY_BASE + ROW_CHAR_SIZE * 8 * 1;
+        int A = DISPLAY_BASE + ROW_CHAR_SIZE * LINE + COLUMN;
         for (int i = 0;i < DISPLAY_SIZE - ROW_CHAR_SIZE * 8;i++) {
-            memory[DISPLAY_BASE + i] = memory[A + i];
+            char temp = mread_char(A + i + ROW_CHAR_SIZE * 8);
+            mwrite(A + i, temp);
         }
 
         for (int i = DISPLAY_SIZE - ROW_CHAR_SIZE * 8;i < DISPLAY_SIZE;i++) {
-            memory[DISPLAY_BASE + i] = 0;
+            mwrite(A + i, 0);
         }
 
         return 0;
@@ -333,17 +334,18 @@ int display_up() {
 
 /**
  * \brief Shifts the entire display map by one 1 unit downwards
- * 
+ *
 */
 int display_down() {
     if (SCREEN_LOCK == 0) {
-        int A = DISPLAY_BASE + ROW_CHAR_SIZE * 8 * 1;
-        for (int i = DISPLAY_SIZE - ROW_CHAR_SIZE * 8;i >= 0;i--) {
-            memory[DISPLAY_BASE + i] = memory[A + i];
+        int A = DISPLAY_BASE + ROW_CHAR_SIZE * LINE + COLUMN;
+        for (int i = DISPLAY_SIZE - ROW_CHAR_SIZE * 8;i > 0;i--) {
+            char temp = mread_char(A + i - ROW_CHAR_SIZE * 8);
+            mwrite(A + i, temp);
         }
 
         for (int i = 0;i < ROW_CHAR_SIZE * 8;i++) {
-            memory[DISPLAY_BASE + i] = 0;
+            mwrite(A + i, 0);
         }
 
         return 0;
@@ -355,12 +357,12 @@ int display_down() {
 // reset the entire display
 void clear_screen() {
     for (int i = 0;i < DISPLAY_SIZE;i++) {
-        memory[DISPLAY_BASE + DISPLAY_START + i] = 0;
+        mwrite(DISPLAY_BASE + i, 0);
     }
 }
 
 /**
- * \brief Display 
+ * \brief Display
 */
 int display_terminal() {
     clear_screen();

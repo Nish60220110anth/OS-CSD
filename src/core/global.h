@@ -7,8 +7,7 @@
  * | io display | io keyboard | heap table | heap segment | tmp segment |
  * 
 */
-
-#define MEM_SIZE 1024 * 64
+#define MEMORY_SIZE 1024 * 64
 #define IO_DISPLAY_SIZE 80
 #define IO_DISPLAY_START 0x8000
 #define IO_DISPLAY_END IO_DISPLAY_START + IO_DISPLAY_SIZE
