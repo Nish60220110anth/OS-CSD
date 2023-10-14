@@ -36,49 +36,5 @@ void memory_copy(uint8_t* dest, uint8_t* src, uint16_t size) {
     }
 }
 
-/**
- * \brief Sets memory.
- * \param mem Pointer to memory.
- * \param size Size of memory.
- * \param value Value to set.
-*/
-void memory_set(uint8_t* mem, uint16_t size, uint8_t value) {
-    for (uint16_t i = 0; i < size; i++) {
-        mem[i] = value;
-    }
-}
-
-/**
- * \brief Frees memory.
- * \param mem Pointer to memory.
-*/
-void memory_free(uint8_t* mem) {
-    free(mem);
-}
-
-/**
- * \brief Allocates memory.
- * \param size Size of memory.
- * \return Pointer to allocated memory.
-*/
-uint8_t* memory_alloc(uint16_t size) {
-    /**
-     *  1 - 1000
-     * 
-     *  |heap table segment|actual heap|
-     *  start  1 , 50
-     *  start  59, 111
-     *   51 - 162 ?
-     *  
-     * 
-     *  ex: 1 - 50 , 59 - 169 occupied
-     * 
-     *  10 segments ? 
-     *  
-    */
-}
-
-// 1) whether struct is supported ?
-//  
 
 #endif // MEMORY_H
