@@ -40,7 +40,7 @@ void keyboard_driver_input_set(struct keyboard_driver_input* input, uint8_t prim
 */
 void keyboard_driver_init() {
     memory_set(memory + IO_KEYBOARD_START, IO_KEYBOARD_SIZE, 0);
-    keyboard_driver_init(keyboard_driver_input);
+    // keyboard_driver_input_init(&keyboard_driver_input);
 }
 
 /**
@@ -88,8 +88,6 @@ struct keyboard_driver_input keyboard_driver_get_input() {
                 }
 
                 if (can_break) break;
-
-                memory[IO_KEYBOARD_START] = 0;
             }
             // when we press shift, we try to return the shifted value
             // if we press shift and a, we return A
@@ -186,6 +184,7 @@ struct keyboard_driver_input keyboard_driver_get_input() {
                             }
                             input = 0;
                             useful_key = true;
+                            break;
                         }
                         else if (second_input == 59) {
                             second_input = 58; // :
@@ -235,7 +234,6 @@ struct keyboard_driver_input keyboard_driver_get_input() {
                     input = 0;
                 }
 
-                memory[IO_KEYBOARD_START] = 0;
             }
             else if (input == CTRL_CODE_ALT) {
                 for (uint8_t i = 0; i < KEYBOARD_WAIT_TIME; i++) {
@@ -250,8 +248,6 @@ struct keyboard_driver_input keyboard_driver_get_input() {
                     second_input = input;
                     input = 0;
                 }
-
-                memory[IO_KEYBOARD_START] = 0;
             }
             else {
                 // if the primary input is not ctrl, alt, shift, etc.
@@ -261,8 +257,9 @@ struct keyboard_driver_input keyboard_driver_get_input() {
                 input = 0;
                 useful_key = true;
                 can_break = true;
-                memory[IO_KEYBOARD_START] = 0;
             }
+            
+            memory[IO_KEYBOARD_START] = 0;
         }
     }
 
@@ -270,4 +267,4 @@ struct keyboard_driver_input keyboard_driver_get_input() {
     return keyboard_driver_input;
 }
 
-#endif 
+#endif // KEYBOARD_DRIVER_H
