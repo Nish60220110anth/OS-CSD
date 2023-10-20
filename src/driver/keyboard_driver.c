@@ -141,4 +141,17 @@ struct keyboard_driver_input keyboard_driver_get_input() {
 // todo: write another function that take manipulate the inputs taken from 
 // the keyboard
 
+struct keyboard_driver_input manipulate_input(struct keyboard_driver_input input) {
+    struct keyboard_driver_input out; 
+
+    // todo: manipulate the input here
+
+    return out;
+}
+
+
+bool isEscape(struct keyboard_driver_input input) {
+    return input.primary_input == 0x1B;
+}
+
 #endif // KEYBOARD_DRIVER_H

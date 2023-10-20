@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "global.c"
+#include "global.h"
 #include "memory.c"
 #include "register.c"
 

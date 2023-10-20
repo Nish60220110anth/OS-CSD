@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 /**
  * Memory size: 128 kbits ? //needs clarification
@@ -57,6 +58,7 @@
 
 #include "core/memory.h"
 #include "core/global.h"
+#include "driver/keyboard_driver.c"
 
 char memory[TOTAL_SIZE + 1];
 
@@ -370,8 +372,106 @@ int display_terminal() {
 }
 
 // @brief: display info panel during focus mode (as seen in vim)
+// enable vim like functionality
+// store all the present content and show vim like functionality
 int focus_info_panel() {
+    if (SCREEN_LOCK == 0) {
+        save_screen();
 
+        // display vim
+        int start = DISPLAY_BASE + DISPLAY_START;
+        int end = DISPLAY_BASE + DISPLAY_START + DISPLAY_SIZE;
+
+        clear_screen(); // clear the screen
+
+        // display vim editor on first line 
+        // display empty lines on the rest of the screen
+        // on the last line, show info panel like vim
+
+        char first_line_content[COLUMN_CHAR_SIZE] = "VIM";
+        write_string_at(first_line_content, COLUMN_CHAR_SIZE, 0, 0);
+
+        char last_line_content[COLUMN_CHAR_SIZE] = "INFO PANEL";
+        write_string_at(last_line_content, COLUMN_CHAR_SIZE, 8 * ROW_CHAR_SIZE - 8, 0);
+
+        // start reading input from keyboard and display what is typed on the screen
+        // read until users types enter
+
+        int v_mode = 0; // visual mode
+        int i_mode = 0; // insert mode
+        int r_mode = 1; // read mode
+
+        while (true) {
+            struct keyboard_driver_input event = keyboard_driver_get_input();
+
+            if (isEscape(event)) {
+                int max_com_len = 10; // max command length 
+                int pre_len = 0;
+
+                char command[max_com_len];
+
+                for (int i = 0;i < max_com_len;i++) {
+                    command[i] = 0;
+
+                    struct keyboard_driver_input input;
+                    input = keyboard_driver_get_input();
+
+                    if (input.secondary_input == CTRL_CODE_ENTER) {
+                        break; // execute command
+                    }
+                    else {
+                        input = manipulate_input(input); // manipulate the input. ex SHIFT + a --> A
+
+                        command[i] = input.secondary_input;
+                        pre_len++;
+                    }
+                }
+
+                // execute the command
+
+                /**
+                 * commands supported:
+                 * :xx => not supported becoz we need directory structures
+                 *
+                 *
+                 * 1. q --> exit focus mode
+                 * 2. w --> save the file
+                 * 3. wq --> save and exit
+                 * 4. x --> save and exit
+                 * 5. i --> insert mode
+                 * 6. v --> visual mode
+                 * 7. r --> read mode
+                */
+
+                if (strcmp(command, "q") == 0) {
+                    retrieve_screen();
+
+                }
+                else if (strcmp(command, "w") == 0) {
+                    i_mode = 1;
+                    // save the file
+                }
+                else if (strcmp(command, "wq") == 0) {
+                    // save and exit
+                }
+                else if (strcmp(command, "x") == 0) {
+                    // save and exit
+                }
+                else if (strcmp(command, "i") == 0) {
+                    // insert mode
+                }
+                else if (strcmp(command, "v") == 0) {
+                    // visual mode
+                }
+                else if (strcmp(command, "r") == 0) {
+                    // read mode
+                }
+                else {
+                    // invalid command
+                }
+            }
+        }
+    }
     return 0;
 }
 
