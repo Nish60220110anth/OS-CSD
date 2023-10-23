@@ -4,34 +4,35 @@
 #include <stdbool.h>
 
 /**
- * Memory size: 128 kbits ? //needs clarification
- *
- * 128 kbytes
- *
- * 2^8 * 2^10 => 2^18
- *
- * address range: 32 bits (8 bytes)
- *
- * screen dimension: first in terms of characters, we can write 160 characters in a row
- * 20 character's vertically
- *
- * 160 * 8 bits in each row
- * each characters takes 8 line rows, thus so to write 20 characters, we need to 8*20 lines of row bytes.
- * Assuming we have 160(8*20) lines vertically and each lines having 160 bytes. total size of memory  = 160 * 160 bytes.
- * so size = 25kbytes
- *
- * Assuming memory size in 16kbytes and screen bitmap take 2k bytes
- *
+ * 1024 X 1024 bits
+ * 
+ * 128 (CHARS) X 64 
+ * 
+ * 128 characters row wise
+ * 64 characters column wise
+ * 
+ * display_base = 0
+ * display_start = 0
+ * display_size = 65536 lines (size of display io in bits map divided by 8)
+ * display_end = 65536
+ * keyboard_start = 65537
+ * 
+ * 128 X 64 X 8 bits = 65536 bits
+ * 
+ * Memory size: 256 kB
+ * 
+ *  display => 64kB
+ *  fontmap => 2kB
+ *  temp    => 25kB
+ * 
  * Fontmap:
  *  128 -> 1kilo byte
  *  256 -> 2kilo bytes
  *
  *  presently we have support for 128 ascii codes, but we have reserved other 128 for future purpose.
  *
- *  display => 25kB
- *  fontmap => 2kB
- *  temp    => 25kB
 */
+
 
 // 52 kilo bytes of memory 
 #define DISPLAY_BASE 0
@@ -61,6 +62,8 @@
 #include "driver/keyboard_driver.c"
 
 char memory[TOTAL_SIZE + 1];
+
+const int max_com_len = 10; // max command length 
 
 // current path in the OS
 char path[128];
@@ -405,7 +408,6 @@ int focus_info_panel() {
             struct keyboard_driver_input event = keyboard_driver_get_input();
 
             if (isEscape(event)) {
-                int max_com_len = 10; // max command length 
                 int pre_len = 0;
 
                 char command[max_com_len];

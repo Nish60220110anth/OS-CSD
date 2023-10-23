@@ -12,6 +12,8 @@
 #include "global.h"
 #include "memory.c"
 #include "register.c"
+#include "driver/keyboard_driver.c"
+#include "driver/display_driver.c"
 
 /**
  * Start the OS
@@ -25,21 +27,16 @@ void os_start() {
 void terminal() {
     // terminal
     while (true) {
-        // get input
-        char input[256];
-        scanf("%s", input); // TODO: use keyboard input instead of scanf
-
-        // execute input
-        if (strcmp(input, "exit") == 0) {
-            break;
-        }
-        else if (strcmp(input, "help") == 0) {
-            printf("Commands:\n");
-            printf("exit: exit the terminal\n");
-            printf("help: show this help message\n");
-        }
-        else {
-            printf("Unknown command: %s\n", input);
+        // get input from keyboard
+        struct keyboard_driver_input input = keyboard_driver_get_input();
+        // if the input is not zero
+        if (input.secondary_input != 0) {
+            // print the input
+            if(input.secondary_input == '\n' || input.secondary_input == CTRL_CODE_ENTER) {
+                write_char('\n');
+            } else {
+                write_char(input.secondary_input);
+            }
         }
     }
 }
