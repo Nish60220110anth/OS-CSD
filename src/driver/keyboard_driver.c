@@ -13,8 +13,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "core/global.h"
-#include "core/memory.h"
+#include "../core/global.h"
+#include "../core/memory.h"
 
 
 struct keyboard_input {
@@ -36,7 +36,6 @@ void keyboard_input_set(struct keyboard_input* input, uint8_t primary_input, uin
  * \brief Initializes keyboard
 */
 void keyboard_init() {
-    memory_set(memory + IO_KEYBOARD_START, IO_KEYBOARD_SIZE, 0);
     int start = IO_KEYBOARD_START;
     int end = IO_KEYBOARD_START + IO_KEYBOARD_SIZE;
     for (int i = start;i < end;i++) {

@@ -18,9 +18,6 @@ char memory[MEMORY_SIZE];
  *  read from file at specific row, col
 */
 
-char* filename = "memory.txt";
-
-FILE* fp;
 // char => to bits 
 void __load_char_as_bits(char c, char* out);
 

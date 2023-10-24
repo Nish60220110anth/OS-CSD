@@ -3,7 +3,7 @@
  * 
  * | OS | stack | heap | display io map | keyboard io map | font map | temp |
  * 
- * Total: 128KB
+ * Total: 256KB
  * 
  * OS : 100KB
  * stack: 10KB 
@@ -14,7 +14,7 @@
  * temp: 38KB
 */
 
-#define MEMORY_SIZE 1024 * 128
+#define MEMORY_SIZE 1024 * 256
 #define OS_SIZE 1024 * 100
 #define OS_START 0
 #define OS_END OS_START + OS_SIZE

@@ -9,11 +9,14 @@
 #include "global.h"
 #include "memory.h"
 
+char* filename = "memory.txt";
+FILE* fp;
+
 // char => to bits 
 void __load_char_as_bits(char c, char* out) {
     int g = c;
     for (int i = 0; i < 8;i++) {
-        out[7 - i] = (g & 1) + '0';
+        out[i] = (g & 1) + '0';
         g >>= 1;
     }
 }
@@ -58,6 +61,7 @@ void mwrite(char c, int addr) {
 */
 void minit() {
     fp = fopen(filename, "rw+");
+
     for (int i = 0;i < MEMORY_SIZE;i++) {
         char line[9];
         line[8] = '\n';
@@ -65,4 +69,12 @@ void minit() {
 
         fwrite(line, sizeof(char), 9, fp);
     }
+
+
+    // printf("s: %s",filename);
+
+    // if(fp == NULL) {
+    //     printf("Error opening file\n");
+    //     exit(1);
+    // }
 }

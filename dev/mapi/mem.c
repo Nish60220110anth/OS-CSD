@@ -62,6 +62,7 @@ void write(char c, int addr) {
  *
 */
 void init() {
+
     fp = fopen(filename, "rw+");
     for (int i = 0;i < MEMORY_SIZE;i++) {
         char line[9];

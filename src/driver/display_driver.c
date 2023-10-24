@@ -33,14 +33,17 @@
  *
 */
 
-#include "core/memory.h"
-#include "core/global.h"
-#include "driver/keyboard_driver.c"
-#include "driver/font_map.h"
+#include "../core/memory.h"
+#include "../core/global.h"
+#include "keyboard_driver.c"
+#include "font_map.h"
+
+#include "../faces/face_0.h"
 
 #define ROW_CHAR_SIZE 128
 #define COLUMN_CHAR_SIZE 64
-#define SCREEN_LOCK 0x01
+#define SCREEN_LOCK 0x00
+#define MUL_CONS 9
 
 const int max_com_len = 10; // max command length 
 
@@ -56,6 +59,7 @@ int focus_mode_col = 0;
 // prototypes
 int write_char(char c);
 int write_char_at(char c, int line, int col);
+void save_screen();
 
 /**
  * @brief write string array in to the display location currently at.
@@ -67,6 +71,7 @@ int write_string(char* msg, int len) {
         int g = 0;
         for (int i = 0;i < len;i++) {
             g = write_char(msg[i]);
+
             if (g != 0) {
                 return g;
             }
@@ -107,28 +112,58 @@ int write_string_at(char* msg, int len, int line, int col) {
 int write_char(char c) {
     // use write and read from mem.c
     if (SCREEN_LOCK == 0) {
-        char font[8];
-        for (int i = 0;i < 8;i++) {
-            font[i] = font_map[c][i];
-        }
-
-        int A = IO_DISPLAY_START + ROW_CHAR_SIZE * LINE + COLUMN; // location of the first character in the line
-        for (int i = 0;i < 7;i++) {
-            mwrite(A + ROW_CHAR_SIZE * i, font[i]);
-        }
-
-        COLUMN++;
-        if (COLUMN == ROW_CHAR_SIZE) { // if the row is full
+        if (c == '\n') {
             COLUMN = 0;
             LINE += 8;
+            if (LINE == 8 * COLUMN_CHAR_SIZE) {
+                LINE = 0;
+                COLUMN = 0;
+
+                return 1;
+            }
+
             return 0;
         }
-
-        if (LINE == 8 * COLUMN_CHAR_SIZE) {// if the screen is full
-            LINE = 0;
+        else if (c == '\r') {
             COLUMN = 0;
+            return 0;
+        }
+        else if (c == '\f') {
+            LINE += 8;
+            if (LINE >= 8 * COLUMN_CHAR_SIZE) {
+                LINE = 0;
+                COLUMN = 0;
+                return 1;
+            }
 
-            return 1;
+            return 0;
+        }
+        else {
+            char font[8];
+            for (int i = 0;i < 8;i++) {
+                font[i] = font_map[c][i];
+            }
+
+            int A = IO_DISPLAY_START + ROW_CHAR_SIZE * LINE + COLUMN; // location of the first character in the line
+            for (int i = 0;i < 8;i++) {
+                mwrite(font[i], A + ROW_CHAR_SIZE * i);
+            }
+
+            COLUMN++;
+            if (COLUMN == ROW_CHAR_SIZE) { // if the row is full
+                COLUMN = 0;
+                LINE += 8;
+                return 0;
+            }
+
+            if (LINE == 8 * COLUMN_CHAR_SIZE) {// if the screen is full
+                LINE = 0;
+                COLUMN = 0;
+
+                return 1;
+            }
+
+            return 0;
         }
     }
 
@@ -147,8 +182,8 @@ int write_char_at(char c, int line, int col) {
         }
 
         int A = IO_DISPLAY_START + ROW_CHAR_SIZE * line + col; // location of the first character in the line
-        for (int i = 0;i < 7;i++) {
-            mwrite(A + ROW_CHAR_SIZE * i, font[i]);
+        for (int i = 0;i < 8;i++) {
+            mwrite(font[i], A + ROW_CHAR_SIZE * i);
         }
 
         return 0;
@@ -164,6 +199,36 @@ void write_char_last_line(char c) {
 
     }
 }
+
+void write_face() {
+    if (SCREEN_LOCK == 0) {
+
+        // if (COLUMN + 16 >= ROW_CHAR_SIZE) {
+        //     LINE += 8;
+        //     COLUMN = 0;
+        // }
+
+        LINE += 8;
+        COLUMN = 0;
+
+        int A = IO_DISPLAY_START + LINE * ROW_CHAR_SIZE + COLUMN;
+
+        for (int i = 0;i < 128;i++) {
+            for (int j = 0;j < 16;j++) {
+                mwrite(font_0[i][j], A + i * ROW_CHAR_SIZE + j);
+            }
+        }
+
+        LINE += 128;
+        COLUMN = 0;
+
+        if (LINE >= 8 * COLUMN_CHAR_SIZE) {
+            LINE = 0;
+            COLUMN = 0;
+        }
+    }
+}
+
 
 
 /**
@@ -286,7 +351,7 @@ int focus_info_panel() {
                 }
                 else if (edit_mode == 1) {
                     // non command mode and write to the display edit screen
-                    char content_to_write[4] = convert_keyinput_to_string(input);
+                    char* content_to_write = convert_keyinput_to_string(input);
                     for (int i = 0;i < 4;i++) {
                         if (content_to_write[i] != '\0') {
                             write_char(content_to_write[i]);
@@ -373,10 +438,10 @@ void save_memory(char* filename, int len) {
     fclose(file);
 }
 
-int main()
-{
-    init_memory();
-    char* mem_file = "some.txt";
-    save_memory(mem_file, sizeof(mem_file));
-    return 0;
-}
+// int main()
+// {
+//     init_memory();
+//     char* mem_file = "some.txt";
+//     save_memory(mem_file, sizeof(mem_file));
+//     return 0;
+// }
