@@ -28,7 +28,7 @@ void terminal() {
     // terminal
     while (true) {
         // get input from keyboard
-        struct keyboard_driver_input input = keyboard_driver_get_input();
+        struct keyboard_input input = keyboard_get_input();
         // if the input is not zero
         if (input.secondary_input != 0) {
             // print the input

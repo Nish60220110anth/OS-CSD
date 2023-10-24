@@ -1,27 +1,41 @@
 /**
  * Global variables, like IO display size, etc.
  * 
- * structure:
+ * | OS | stack | heap | display io map | keyboard io map | font map | temp |
  * 
- * | data segment | text segment | stack segment | 
- * | io display | io keyboard | heap table | heap segment | tmp segment |
+ * Total: 128KB
  * 
+ * OS : 100KB
+ * stack: 10KB 
+ * heap: 50KB
+ * Display io map: 64KB
+ * keyboard io map: 1B
+ * fontmap: 2KB
+ * temp: 38KB
 */
-#define MEMORY_SIZE 1024 * 64
-#define IO_DISPLAY_SIZE 80
-#define IO_DISPLAY_START 0x8000
+
+#define MEMORY_SIZE 1024 * 128
+#define OS_SIZE 1024 * 100
+#define OS_START 0
+#define OS_END OS_START + OS_SIZE
+#define STACK_SIZE 1024 * 10
+#define STACK_START OS_END
+#define STACK_END STACK_START + STACK_SIZE
+#define HEAP_SIZE 1024 * 50
+#define HEAP_START STACK_END
+#define HEAP_END HEAP_START + HEAP_SIZE
+#define IO_DISPLAY_SIZE 1024 * 64
+#define IO_DISPLAY_START HEAP_END
 #define IO_DISPLAY_END IO_DISPLAY_START + IO_DISPLAY_SIZE
 #define IO_KEYBOARD_SIZE 1
-#define IO_KEYBOARD_START 0x9000
+#define IO_KEYBOARD_START IO_DISPLAY_END
 #define IO_KEYBOARD_END IO_KEYBOARD_START + IO_KEYBOARD_SIZE
-#define MEM_HEAP_TABLE_START 0x0000
-#define MEM_HEAP_TABLE_SIZE 0x0FFF
-#define MEM_HEAP_TABLE_END MEM_HEAP_TABLE_START + MEM_HEAP_TABLE_SIZE
-#define MEM_HEAP_SEGMENT_START 0x1000
-#define MEM_HEAP_SEGMENT_SIZE 0x0FFF
-#define MEM_HEAP_SEGMENT_END MEM_HEAP_SEGMENT_START + MEM_HEAP_SEGMENT_SIZE
-#define MEM_TMP_SEGMENT_START 0x1000
-#define MEM_TMP_SEGMENT_END 0x1FFF
+#define FONTMAP_SIZE 1024 * 2
+#define FONTMAP_START IO_KEYBOARD_END
+#define FONTMAP_END FONTMAP_START + FONTMAP_SIZE
+#define TEMP_SIZE 1024 * 38
+#define TEMP_START FONTMAP_END
+#define TEMP_END TEMP_START + TEMP_SIZE
 
 // Keyboard constants
 #define KEYBOARD_WAIT_TIME 5
