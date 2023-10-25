@@ -88,6 +88,10 @@ char* convert_keyinput_to_string(char input) {
     return out;
 }
 
+char manipulate_input(char c) {
+    return c;
+}
+
 bool isEscape(char input) {
     return input == 0x1B;
 }

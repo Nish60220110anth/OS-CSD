@@ -53,7 +53,7 @@ void display_test() {
 
     set_cursor_pos(32, 0);
     write_char('\n');
-    write_string("Namo 2024!\n\n", 12);
+    write_string("Namo 2024-8!\n\n", 14);
     write_string("India lifts the World Cup after 28 years!", 42);
 
     int val[2];
@@ -87,8 +87,8 @@ void display_test() {
 
 int main() {
     os_start();
-    // display_test();
-    terminal();
+    display_test();
+    // terminal();
     return 0;
 }
 
