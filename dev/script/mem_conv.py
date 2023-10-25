@@ -27,7 +27,8 @@ height = len(lines)
 image = Image.new('L', (width, height))
 
 pixels = [text_to_grayscale(line) for line in lines]
-image.putdata([pixel for row in pixels for pixel in row])
+flattened_data = [pixel for row in pixels for pixel in row]
+image.putdata(flattened_data)
 
 # Save the grayscale image
 image.save(output_image)

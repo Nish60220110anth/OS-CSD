@@ -16,22 +16,6 @@
 #include "../core/global.h"
 #include "../core/memory.h"
 
-
-struct keyboard_input {
-    uint8_t primary_input;
-    uint8_t secondary_input;
-} *keyboard_input;
-
-void keyboard_input_init(struct keyboard_input* input) {
-    input->primary_input = 0;
-    input->secondary_input = 0;
-}
-
-void keyboard_input_set(struct keyboard_input* input, uint8_t primary_input, uint8_t secondary_input) {
-    input->primary_input = primary_input;
-    input->secondary_input = secondary_input;
-}
-
 /**
  * \brief Initializes keyboard
 */
@@ -43,12 +27,9 @@ void keyboard_init() {
     }
 }
 
-struct keyboard_input keyboard_get_input() {
-    uint8_t second_input = 0;
-    uint8_t input = 0;
+char keyboard_get_input() {
+    char input = 0;
     bool can_break = false;
-
-    keyboard_input_init(keyboard_input);
 
     while (true) {
         can_break = false;
@@ -67,25 +48,13 @@ struct keyboard_input keyboard_get_input() {
         }
     }
 
-    keyboard_input_set(keyboard_input, input, second_input);
-    return *keyboard_input;
+    return input;
 }
 
-struct keyboard_input manipulate_input(struct keyboard_input input) {
-    struct keyboard_input out;
-
-    out.primary_input = input.primary_input;
-    out.secondary_input = input.secondary_input;
-
-    // todo: manipulate the input here
-
-    return out;
-}
-
-char* convert_keyinput_to_string(struct keyboard_input input) {
+char* convert_keyinput_to_string(char input) {
     char out[4];
 
-    switch (input.primary_input) {
+    switch (input) {
     case CTRL_CODE_ENTER: {
         // ENTR
         out[0] = 'E';
@@ -111,7 +80,7 @@ char* convert_keyinput_to_string(struct keyboard_input input) {
     }
 
     default: {
-        out[0] = input.primary_input;
+        out[0] = input;
         out[1] = '\0';
     }
     }
@@ -119,8 +88,8 @@ char* convert_keyinput_to_string(struct keyboard_input input) {
     return out;
 }
 
-bool isEscape(struct keyboard_input input) {
-    return input.primary_input == 0x1B;
+bool isEscape(char input) {
+    return input == 0x1B;
 }
 
 #endif // KEYBOARD_DRIVER_H

@@ -33,15 +33,15 @@ void terminal() {
     // terminal
     while (true) {
         // get input from keyboard
-        struct keyboard_input input = keyboard_get_input();
+        char input = keyboard_get_input();
         // if the input is not zero
-        if (input.primary_input != 0) {
+        if (input != 0) {
             // print the input
-            if (input.primary_input == '\n' || input.primary_input == CTRL_CODE_ENTER) {
+            if (input == '\n' || input == CTRL_CODE_ENTER) {
                 write_char('\n');
             }
             else {
-                write_char(input.primary_input);
+                write_char(input);
             }
         }
     }
@@ -83,10 +83,12 @@ void display_test() {
     write_string("\rCSD CS", 7);
 }
 
+
+
 int main() {
     os_start();
-    display_test();
-
+    // display_test();
+    terminal();
     return 0;
 }
 

@@ -401,7 +401,7 @@ int focus_info_panel() {
         int edit_mode = 0;
 
         while (true) {
-            struct keyboard_input input = keyboard_get_input();
+            char input = keyboard_get_input();
             input = manipulate_input(input);
 
             if (command_mode == 0) {
@@ -410,7 +410,7 @@ int focus_info_panel() {
                 }
 
                 if (visual_mode == 1) {
-                    if (input.primary_input == 'i') {
+                    if (input == 'i') {
                         visual_mode = 0;
                         edit_mode = 1;
                     }

@@ -61,7 +61,7 @@ This script is used to generate the array in c structure for the face image. Thi
 
 ##### Example output
 > Input image
-![input](./face/images/Thalapathy.jpg)
+![input](./face/images/india_map.png)
 
 > Final image
 
@@ -215,4 +215,4 @@ This is a simple memory visualizer which takes the memory dump and then displays
 
 File watches the memory in the core constantly until any error occurs. Once any change is made in the file, then this watcher runs shell script which runs all necessary commands to change the output in the final output display.
 
-We can also attack this watcher to the environment of the memory (ex. `./dev/faces`) which can affect the final output but presently it is confied only to the core `memory.txt`.
+We can also attach this watcher to the environment of the memory (ex. `./dev/faces`) which can affect the final output but presently it is confied only to the core `memory.txt`.
