@@ -12,6 +12,11 @@
 #include "global.h"
 #include "memory.c"
 #include "register.c"
+
+#include "../faces/face_0.h"
+#include "../faces/face_1.h"
+#include "../faces/face_2.h"
+
 #include "../driver/keyboard_driver.c"
 #include "../driver/display_driver.c"
 
@@ -48,20 +53,26 @@ int main() {
     // write_char('7');
     // write_char_at('7', 0, 0);
 
-    write_string("Bloody Sweet!", 13);
+    write_string("\nTeam RISC V1\n\n\n", 16);
+    write_string_at("Welcome to Flex OS\n\n", 20, 24, 0);
+
+    set_cursor_pos(32, 0);
     write_char('\n');
-    write_string("Nee Yaru?", 9);
-    write_char('\f');
-    write_string("Leo", 3);
-    write_face();
-    // write_char('\n');
-    write_string("Author", 6);
-    write_char('\f');
-    write_string("Nishanth", 8);
+    write_string("Namo 2024!\n\n", 12);
+    write_string("India lifts the World Cup after 28 years!", 42);
+
+    write_char('\n');
+    write_face(font_2);
+    write_char('\n');
+    write_face(font_0);
+    write_char('\n');
+    write_face(font_1);
     write_char('\n');
 
-    write_string_at("Dhoni finishes in Style!", 25, 176, 0);
-    write_string_at("India lifts the World Cup after 28 years!", 42, 184, 0);
+    write_char('a');
+    write_char(CTRL_CODE_BACKSPACE);
+    write_char('b');
+
     // terminal();
     return 0;
 }

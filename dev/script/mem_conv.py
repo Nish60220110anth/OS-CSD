@@ -10,7 +10,7 @@ output_image = 'memory.png'
 
 # Read the content from line1 to line2
 line1 = 1280  # Line numbering starts from 1
-line2 = 1600  # Adjust this to the desired range
+line2 = 2000  # Adjust this to the desired range
 
 # Read the lines within the specified range
 lines = []

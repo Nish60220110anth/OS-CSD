@@ -2,6 +2,9 @@ import os
 import os.path as path
 import cv2 as cv
 import numpy as np
+import sys
+
+stdout = sys.stdout
 
 image_paths = os.listdir(path.join(os.getcwd(), 'images'))
 
@@ -10,34 +13,68 @@ def conv_image_file(filepath, output_path, count):
     img = cv.imread(filepath, cv.IMREAD_GRAYSCALE)
     # change size of image preserving aspec ratio
 
+    # calculate mode in the np array
+
+    max = 0
+    dict = {}
+
+    for row in img:
+        for col in row:
+            if col in dict:
+                dict[col] += 1
+            else:
+                dict[col] = 1
+
+            if dict[col] > max:
+                max = col
+
     height, width = img.shape
     if height > width:
         img = cv.resize(img, (int(128 * width / height), 128))
     else:
         img = cv.resize(img, (128, int(128 * height / width)))
 
+    # max = 0 if max < 100 else 255
+    print(max)
+
     # now append black pixels to make it 128x128
     height, width = img.shape
-    if height < 128:
-        img = np.append(img, np.zeros((128 - height, width)), axis=0)
-    if width < 128:
-        img = np.append(img, np.zeros((128, 128 - width)), axis=1)
+    if max == 0:
+        if height < 128:
+            img = np.append(img, np.zeros((128 - height, width)), axis=0)
+        if width < 128:
+            img = np.append(img, np.zeros((128, 128 - width)), axis=1)
+    else:
+        if height < 128:
+            img = np.append(img, max*np.ones((128 - height, width)), axis=0)
+        if width < 128:
+            img = np.append(img, max*np.ones((128, 128 - width)), axis=1)
 
-    cv.imwrite("sample.jpeg", img)
+    cv.imwrite("./sample.jpeg", img)
+
     img = np.uint8(img)
     # img = cv.resize(img, (128, 128))
     # img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     # img = cv.adaptiveThreshold(img, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                    # cv.THRESH_BINARY, 5, 2)
+    # cv.THRESH_BINARY, 5, 2)
     # img = cv.GaussianBlur(img, (3, 3), 0)
 
     img = cv.Canny(img, 40, 200)
+    ret, img = cv.threshold(img, 100, 255, cv.THRESH_BINARY, img)
     # img = cv.bitwise_not(img)
     cv.imwrite(output_path, img)
 
     content = np.array(img)
     initial_content = "char font_{}[{}][{}] = {{\n".format(
         count, len(content), int(len(content[0])/8))
+
+    def reverse(num):
+        result = 0
+        for i in range(8):
+            result = result << 1
+            result += (num & 1)
+            num = num >> 1
+        return result
 
     for c, row in enumerate(content):
         initial_content += "\t{"
@@ -46,6 +83,14 @@ def conv_image_file(filepath, output_path, count):
             value = value << 1
             value += (1 if col == 255 else 0)
             if cc % 8 == 7:
+                with open("log.txt", "w") as f:
+                    # sys.stdout = f
+                    if value != 0:
+                        pass
+                        # print(
+                        # f"Original Value: {value}\t Reversed Value: {reverse(value)}")
+                    # sys.stdout = stdout
+                value = reverse(value)
                 initial_content += "{}".format(value)
                 value = 0
                 if cc != len(row) - 1:

@@ -38,8 +38,6 @@
 #include "keyboard_driver.c"
 #include "font_map.h"
 
-#include "../faces/face_0.h"
-
 #define ROW_CHAR_SIZE 128
 #define COLUMN_CHAR_SIZE 64
 #define SCREEN_LOCK 0x00
@@ -148,6 +146,27 @@ int write_char(char c) {
 
             return 0;
         }
+        else if (c == CTRL_CODE_BACKSPACE) {
+            if (COLUMN == 0) {
+                if (LINE == 0) {
+                    return 0;
+                }
+                else {
+                    COLUMN = ROW_CHAR_SIZE - 1;
+                    LINE -= 8;
+                }
+            }
+            else {
+                COLUMN--;
+            }
+
+            int A = IO_DISPLAY_START + ROW_CHAR_SIZE * LINE + COLUMN;
+            for (int i = 0;i < 8;i++) {
+                mwrite(A + ROW_CHAR_SIZE * i, 0);
+            }
+
+            return 0;
+        }
         else {
             char font[8];
             for (int i = 0;i < 8;i++) {
@@ -210,7 +229,7 @@ void write_char_last_line(char c) {
     }
 }
 
-void write_face() {
+void write_face(char font[128][16]) {
     if (SCREEN_LOCK == 0) {
 
         // if (COLUMN + 16 >= ROW_CHAR_SIZE) {
@@ -225,7 +244,7 @@ void write_face() {
 
         for (int i = 0;i < 128;i++) {
             for (int j = 0;j < 16;j++) {
-                mwrite(font_0[i][j], A + i * ROW_CHAR_SIZE + j);
+                mwrite(font[i][j], A + i * ROW_CHAR_SIZE + j);
             }
         }
 
