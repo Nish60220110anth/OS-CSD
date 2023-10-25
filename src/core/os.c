@@ -48,16 +48,20 @@ int main() {
     // write_char('7');
     // write_char_at('7', 0, 0);
 
-    // write_string_at("Dhoni finishes in Style!", 25, 8, 0);
-    // write_string_at("India lifts the World Cup after 28 years!", 43, 16, 0);
-
     write_string("Bloody Sweet!", 13);
     write_char('\n');
-    write_string("Name?", 5);
+    write_string("Nee Yaru?", 9);
+    write_char('\f');
+    write_string("Leo", 3);
+    write_face();
+    // write_char('\n');
+    write_string("Author", 6);
     write_char('\f');
     write_string("Nishanth", 8);
-    write_face();
+    write_char('\n');
 
+    write_string_at("Dhoni finishes in Style!", 25, 176, 0);
+    write_string_at("India lifts the World Cup after 28 years!", 42, 184, 0);
     // terminal();
     return 0;
 }

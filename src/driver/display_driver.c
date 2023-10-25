@@ -104,6 +104,16 @@ int write_string_at(char* msg, int len, int line, int col) {
     return 0;
 }
 
+int set_cursor_pos(int line, int col) {
+    if (line < 0 || line >= 8 * COLUMN_CHAR_SIZE) return 1;
+    if (col < 0 || col >= ROW_CHAR_SIZE) return 1;
+
+    LINE = line;
+    COLUMN = col;
+
+    return 0;
+}
+
 /**
  * @brief write_char writes a character included in fontmap at the last location
  * @note takes care of word wrapping
