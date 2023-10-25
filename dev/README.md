@@ -210,3 +210,9 @@ This is a simple memory visualizer which takes the memory dump and then displays
 > Here, the we can see the complete image but only to look into display segment of the memory segment, we have another script `./script/mem_conv.py` which takes the output of the memory visualizer and then displays the memory segment. The output of this is as follows
 
 ![memory output](./script/memory.png)
+
+### File Watcher
+
+File watches the memory in the core constantly until any error occurs. Once any change is made in the file, then this watcher runs shell script which runs all necessary commands to change the output in the final output display.
+
+We can also attack this watcher to the environment of the memory (ex. `./dev/faces`) which can affect the final output but presently it is confied only to the core `memory.txt`.

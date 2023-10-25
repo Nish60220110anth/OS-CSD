@@ -61,20 +61,15 @@ void mwrite(char c, int addr) {
 */
 void minit() {
     fp = fopen(filename, "rw+");
+    if (fp == NULL) {
+        fp = fopen(filename, "rw+");
 
-    for (int i = 0;i < MEMORY_SIZE;i++) {
-        char line[9];
-        line[8] = '\n';
-        __load_char_as_bits(0, line);
+        for (int i = 0;i < MEMORY_SIZE;i++) {
+            char line[9];
+            line[8] = '\n';
+            __load_char_as_bits(0, line);
 
-        fwrite(line, sizeof(char), 9, fp);
+            fwrite(line, sizeof(char), 9, fp);
+        }
     }
-
-
-    // printf("s: %s",filename);
-
-    // if(fp == NULL) {
-    //     printf("Error opening file\n");
-    //     exit(1);
-    // }
 }

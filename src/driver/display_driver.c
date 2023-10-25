@@ -112,6 +112,42 @@ int set_cursor_pos(int line, int col) {
     return 0;
 }
 
+void get_cursor_pos(int* vals) {
+    vals[0] = LINE;
+    vals[1] = COLUMN;
+}
+
+int write_string_at_col(char* msg, int len, int line, int col) {
+    if (SCREEN_LOCK == 0) {
+        if (line >= 8 * COLUMN_CHAR_SIZE) return 1;
+        if (col >= ROW_CHAR_SIZE || col < 0) return 1;
+
+        int g = 0;
+        for (int i = 0;i < len;i++) {
+            g = write_char_at(msg[i], line, col);
+            if (g != 0) {
+                return g;
+            }
+
+            line += 8;
+
+            if (line == 8 * COLUMN_CHAR_SIZE) {
+                line = 0;
+                col = 0;
+
+                return 1;
+            }
+            
+            if (col == ROW_CHAR_SIZE) {
+                col = 0;
+                line += 8;
+            }
+        }
+    }
+
+    return 1;
+}
+
 /**
  * @brief write_char writes a character included in fontmap at the last location
  * @note takes care of word wrapping
@@ -120,6 +156,7 @@ int set_cursor_pos(int line, int col) {
 int write_char(char c) {
     // use write and read from mem.c
     if (SCREEN_LOCK == 0) {
+
         if (c == '\n') {
             COLUMN = 0;
             LINE += 8;
