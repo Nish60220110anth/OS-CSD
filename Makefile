@@ -13,8 +13,11 @@ execute:
 init:
 	@mkdir  build
 
-whole:
-	cd ./dev/ && bash run.sh
+wholeC:
+	cd ./dev/ && bash conda_run.sh
+
+wholeP:
+	cd ./dev/ && bash python_run.sh
 
 run: init icmake
 
