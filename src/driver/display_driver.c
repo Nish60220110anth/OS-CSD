@@ -64,7 +64,7 @@ void save_screen();
  * @returns returns 0 on success, otherwise failure. Failure occurs when the fontmap doesn't exist
  * @note supports word wrapping
  */
-int write_string(char *msg, int len)
+int write_string(char* msg, int len)
 {
     if (SCREEN_LOCK == 0)
     {
@@ -82,7 +82,7 @@ int write_string(char *msg, int len)
     }
 }
 
-int write_string_at(char *msg, int len, int line, int col)
+int write_string_at(char* msg, int len, int line, int col)
 {
     int g = 0;
     for (int i = 0; i < len; i++)
@@ -124,13 +124,13 @@ int set_cursor_pos(int line, int col)
     return 0;
 }
 
-void get_cursor_pos(int *vals)
+void get_cursor_pos(int* vals)
 {
     vals[0] = LINE;
     vals[1] = COLUMN;
 }
 
-int write_string_at_col(char *msg, int len, int line, int col)
+int write_string_at_col(char* msg, int len, int line, int col)
 {
     if (SCREEN_LOCK == 0)
     {
@@ -402,13 +402,19 @@ int display_up()
     if (SCREEN_LOCK == 0)
     {
         int A = IO_DISPLAY_START;
-        for (int _line = 0; _line < 8 * COLUMN_CHAR_SIZE; _line++)
-        {
-            int base = A + _line * ROW_CHAR_SIZE;
-            for (int i = 0; i < ROW_CHAR_SIZE; i++)
-            {
-                char temp = mread_char(base + i + ROW_CHAR_SIZE);
-                mwrite(temp, base + i);
+        for (int j = 0;j < 8;j++) {
+            for (int addr = 0; addr < IO_DISPLAY_SIZE - ROW_CHAR_SIZE; addr++) {
+                char temp = mread_char(A + addr + ROW_CHAR_SIZE);
+                // reverse temp 
+                char temp2 = 0;
+
+                for (int i = 0; i < 8; i++) {
+                    if ((temp >> i) & 1) {
+                        temp2 |= (1 << (7 - i));
+                    }
+                }
+
+                mwrite(temp2, A + addr);
             }
         }
 
@@ -439,18 +445,23 @@ int display_down()
 {
     if (SCREEN_LOCK == 0)
     {
-        int A = IO_DISPLAY_START + ROW_CHAR_SIZE * 8 * (COLUMN_CHAR_SIZE - 1);
+        int A = IO_DISPLAY_START;
 
-        for (int _line = 0; _line < 8 * COLUMN_CHAR_SIZE; _line += 8)
-        {
-            for (int i = 0; i < ROW_CHAR_SIZE * 8; i++)
-            {
-                char temp = mread_char(A - ROW_CHAR_SIZE * 8 + i);
-                mwrite(temp, A + i);
+        for (int j = 0;j < 8;j++) {
+            for (int addr = IO_DISPLAY_SIZE - ROW_CHAR_SIZE; addr >= 0; addr--) {
+                char temp = mread_char(A + addr);
+                // reverse temp 
+                char temp2 = 0;
+
+                for (int i = 0; i < 8; i++) {
+                    if ((temp >> i) & 1) {
+                        temp2 |= (1 << (7 - i));
+                    }
+                }
+
+                mwrite(temp2, A + addr + ROW_CHAR_SIZE);
             }
-            A -= ROW_CHAR_SIZE * 8;
         }
-
         // clear the first line (A)
         for (int i = 0; i < ROW_CHAR_SIZE * 8; i++)
         {
@@ -500,9 +511,9 @@ void clear_screen()
  * 7. r --> read mode
  */
 
-// @brief: display info panel during focus mode (as seen in vim)
-// enable vim like functionality
-// store all the present content and show vim like functionality
+ // @brief: display info panel during focus mode (as seen in vim)
+ // enable vim like functionality
+ // store all the present content and show vim like functionality
 int focus_info_panel()
 {
     if (SCREEN_LOCK == 0)
@@ -540,7 +551,8 @@ int focus_info_panel()
                 else if (edit_mode == 1)
                 {
                     // non command mode and write to the display edit screen
-                    char *content_to_write = convert_keyinput_to_string(input);
+                    char content_to_write[4];
+                    convert_keyinput_to_string(input, content_to_write);
                     for (int i = 0; i < 4; i++)
                     {
                         if (content_to_write[i] != '\0')
@@ -589,9 +601,9 @@ void retrieve_screen()
     }
 }
 
-int set_fontmap(char *filename, int len)
+int set_fontmap(char* filename, int len)
 {
-    FILE *file = fopen(filename, "r");
+    FILE* file = fopen(filename, "r");
     if (file == NULL)
     {
         return 1;
@@ -609,9 +621,9 @@ void init_memory()
     }
 }
 
-void save_memory(char *filename, int len)
+void save_memory(char* filename, int len)
 {
-    FILE *file = fopen(filename, "w");
+    FILE* file = fopen(filename, "w");
     for (int i = 0; i < MEMORY_SIZE; i++)
     {
         char temp[9];
@@ -635,7 +647,7 @@ void save_memory(char *filename, int len)
         }
 
         fwrite(temp, sizeof(char), strlen(temp), file);
-        char *newline = "\n";
+        char* newline = "\n";
         fwrite(newline, sizeof(char), strlen(newline), file);
     }
 

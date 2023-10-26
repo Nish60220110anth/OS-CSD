@@ -51,9 +51,7 @@ char keyboard_get_input() {
     return input;
 }
 
-char* convert_keyinput_to_string(char input) {
-    char out[4];
-
+void convert_keyinput_to_string(char input, char* out) {
     switch (input) {
     case CTRL_CODE_ENTER: {
         // ENTR
@@ -84,8 +82,6 @@ char* convert_keyinput_to_string(char input) {
         out[1] = '\0';
     }
     }
-
-    return out;
 }
 
 char manipulate_input(char c) {

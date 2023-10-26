@@ -49,7 +49,7 @@ void terminal() {
 
 void display_test() {
     clear_screen();
-    write_string("\nTeam RISC V1\n\n\n", 16);
+    write_string("Team RISC V1\n\n\n", 16);
     write_string_at("Welcome to Flex OS\n\n", 20, 24, 0);
 
     set_cursor_pos(32, 0);
@@ -68,7 +68,7 @@ void display_test() {
     int col = val[1];
 
     write_string_at("Hindu", 5, line - 104, col + 20);
-    write_string_at_col("Bharat", 6, line - 120, col + 35);
+    write_string_at_col("Bharat", 6, line - 112, col + 35);
 
     get_cursor_pos(val);
     line = val[0];
@@ -92,6 +92,9 @@ void display_test() {
     write_char('\t');
     write_string("After Tab", 9);
 
+    // display_down();
+    // display_down();
+    // display_down();
     display_up();
 }
 
