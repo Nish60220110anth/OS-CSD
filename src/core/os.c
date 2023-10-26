@@ -81,7 +81,7 @@ void display_test() {
     write_face(font_1);
     write_char('\n');
 
-    write_string("Course: \f", 9);
+    write_string("Kakkos: \f", 9);
     get_cursor_pos(val);
     line = val[0];
     write_char('\r');
