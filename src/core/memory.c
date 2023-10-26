@@ -60,9 +60,9 @@ void mwrite(char c, int addr) {
  *
 */
 void minit() {
-    fp = fopen(filename, "rw+");
+    fp = fopen(filename, "r+");
     if (fp == NULL) {
-        fp = fopen(filename, "rw+");
+        fp = fopen(filename, "w+");
 
         for (int i = 0;i < MEMORY_SIZE;i++) {
             char line[9];

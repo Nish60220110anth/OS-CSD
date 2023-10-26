@@ -41,7 +41,7 @@ The display driver is used to display the output of the OS. The display driver s
 10. Form feed
 11. Carriage return
 12. Backspace
-13. Tab (*not implemented yet*)
+13. Tab
 14. Write face (only 128x128)
 15. Write face at position (*not implemented yet*)
 

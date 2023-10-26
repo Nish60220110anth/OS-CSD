@@ -137,12 +137,40 @@ int write_string_at_col(char* msg, int len, int line, int col) {
 
                 return 1;
             }
-            
+
             if (col == ROW_CHAR_SIZE) {
                 col = 0;
                 line += 8;
             }
         }
+    }
+
+    return 1;
+}
+
+int write_zero_line_at(int line) {
+    if (SCREEN_LOCK == 0) {
+        if (line < 0 || line >= 8 * COLUMN_CHAR_SIZE) return 1;
+
+        int A = IO_DISPLAY_START + ROW_CHAR_SIZE * line;
+        for (int i = 0;i < ROW_CHAR_SIZE * 8;i++) {
+            mwrite(0, A + i);
+        }
+
+        return 0;
+    }
+
+    return 1;
+}
+
+int write_zero_line() {
+    if (SCREEN_LOCK == 0) {
+        int A = IO_DISPLAY_START + ROW_CHAR_SIZE * LINE;
+        for (int i = 0;i < ROW_CHAR_SIZE * 8;i++) {
+            mwrite(0, A + i);
+        }
+
+        return 0;
     }
 
     return 1;
@@ -183,6 +211,20 @@ int write_char(char c) {
 
             return 0;
         }
+        else if (c == '\t') {
+            COLUMN += 4;
+            if (COLUMN >= ROW_CHAR_SIZE) {
+                COLUMN = 0;
+                LINE += 8;
+                if (LINE >= 8 * COLUMN_CHAR_SIZE) {
+                    LINE = 0;
+                    COLUMN = 0;
+                    return 1;
+                }
+            }
+
+            return 0;
+        }
         else if (c == CTRL_CODE_BACKSPACE) {
             if (COLUMN == 0) {
                 if (LINE == 0) {
@@ -199,7 +241,7 @@ int write_char(char c) {
 
             int A = IO_DISPLAY_START + ROW_CHAR_SIZE * LINE + COLUMN;
             for (int i = 0;i < 8;i++) {
-                mwrite(A + ROW_CHAR_SIZE * i, 0);
+                mwrite(0, A + ROW_CHAR_SIZE * i);
             }
 
             return 0;
@@ -262,17 +304,12 @@ void write_char_last_line(char c) {
     if (SCREEN_LOCK == 0) {
         int A = IO_DISPLAY_START + (COLUMN_CHAR_SIZE - 1) * 8 * ROW_CHAR_SIZE;
 
-
+        // todo: write the character at the last line
     }
 }
 
 void write_face(char font[128][16]) {
     if (SCREEN_LOCK == 0) {
-
-        // if (COLUMN + 16 >= ROW_CHAR_SIZE) {
-        //     LINE += 8;
-        //     COLUMN = 0;
-        // }
 
         LINE += 8;
         COLUMN = 0;
@@ -306,14 +343,14 @@ int display_up() {
         for (int _line = 0; _line < 8 * COLUMN_CHAR_SIZE; _line += 8) {
             for (int i = 0;i < ROW_CHAR_SIZE * 8;i++) {
                 char temp = mread_char(A + i + ROW_CHAR_SIZE * 8);
-                mwrite(A + i, temp);
+                mwrite(temp, A + i);
             }
             A += ROW_CHAR_SIZE * 8;
         }
 
         // clear the last line (A)
         for (int i = 0;i < ROW_CHAR_SIZE * 8;i++) {
-            mwrite(A + i, 0);
+            mwrite(0, A + i);
         }
 
         // update the current line
@@ -339,14 +376,14 @@ int display_down() {
         for (int _line = 0; _line < 8 * COLUMN_CHAR_SIZE; _line += 8) {
             for (int i = 0;i < ROW_CHAR_SIZE * 8;i++) {
                 char temp = mread_char(A - ROW_CHAR_SIZE * 8 + i);
-                mwrite(A + i, temp);
+                mwrite(temp, A + i);
             }
             A -= ROW_CHAR_SIZE * 8;
         }
 
         // clear the first line (A)
         for (int i = 0;i < ROW_CHAR_SIZE * 8;i++) {
-            mwrite(A + i, 0);
+            mwrite(0, A + i);
         }
 
         // update the current line
@@ -363,12 +400,15 @@ int display_down() {
 
 // reset the entire display
 void clear_screen() {
-    for (int i = 0;i < IO_DISPLAY_SIZE;i++) {
-        mwrite(IO_DISPLAY_START + i, 0);
-    }
+    if (SCREEN_LOCK == 0) {
+        int A = IO_DISPLAY_START + IO_DISPLAY_SIZE - 1;
+        for (int i = A;i >= IO_DISPLAY_START;i--) {
+            mwrite(0, i);
+        }
 
-    LINE = 0;
-    COLUMN = 0;
+        LINE = 0;
+        COLUMN = 0;
+    }
 }
 
 /**
@@ -473,7 +513,7 @@ int set_fontmap(char* filename, int len) {
 
 void init_memory() {
     for (int i = 0;i < MEMORY_SIZE;i++) {
-        mwrite(i, 0);
+        mwrite(0, i);
     }
 }
 

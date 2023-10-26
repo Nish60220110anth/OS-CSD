@@ -48,12 +48,13 @@ void terminal() {
 }
 
 void display_test() {
+    clear_screen();
     write_string("\nTeam RISC V1\n\n\n", 16);
     write_string_at("Welcome to Flex OS\n\n", 20, 24, 0);
 
     set_cursor_pos(32, 0);
     write_char('\n');
-    write_string("Namo 2024-8!\n\n", 14);
+    write_string("Namo 2024!\n\n", 12);
     write_string("India lifts the World Cup after 28 years!", 42);
 
     int val[2];
@@ -69,18 +70,27 @@ void display_test() {
     write_string_at("Hindu", 5, line - 104, col + 20);
     write_string_at_col("Hindu", 5, line - 120, col + 35);
 
+    get_cursor_pos(val);
+    line = val[0];
+
+    set_cursor_pos(line - 48, 0);
+
     write_char('\n');
     write_face(font_0);
     write_char('\n');
     write_face(font_1);
     write_char('\n');
 
-    // write_char('a');
-    // write_char(CTRL_CODE_BACKSPACE);
-    // write_char('b');
+    write_string("Course: \f", 9);
+    get_cursor_pos(val);
+    line = val[0];
+    write_char('\r');
+    write_zero_line(line);
+    write_string("CS 342", 6);
+    write_char(CTRL_CODE_BACKSPACE);
 
-    write_string("Course: \f", 12);
-    write_string("\rCSD CS", 7);
+    write_char('\t');
+    write_string("After Tab", 9);
 }
 
 
