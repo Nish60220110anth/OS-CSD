@@ -18,8 +18,7 @@ jobs:
         sudo apt-get install -y make
     - name: Install python deps
       run: |
-         pip install opencv-python
-         conda install opencv-python
+         conda install opencv
     - name: Run
       run: |
         make whole
