@@ -16,6 +16,9 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y make
+    - name: Install python deps
+      run: |
+         pip install opencv-python
     - name: Run
       run: |
         make whole
