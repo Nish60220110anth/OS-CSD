@@ -19,7 +19,7 @@
 *.dll
 
 # Fortran module files
-*.mod
+# *.mod ( mod is used in go )
 *.smod
 
 # Compiled Static libraries
