@@ -34,23 +34,11 @@ def conv_image_file(filepath, output_path, count):
     else:
         img = cv.resize(img, (128, int(128 * height / width)))
 
-    # max = 0 if max < 100 else 255
-    print(max)
-
-    # now append black pixels to make it 128x128
     height, width = img.shape
-    if max == 0:
-        if height < 128:
-            img = np.append(img, np.zeros((128 - height, width)), axis=0)
-        if width < 128:
-            img = np.append(img, np.zeros((128, 128 - width)), axis=1)
-    else:
-        if height < 128:
-            img = np.append(img, max*np.ones((128 - height, width)), axis=0)
-        if width < 128:
-            img = np.append(img, max*np.ones((128, 128 - width)), axis=1)
-
-    cv.imwrite("./sample.jpeg", img)
+    if height < 128:
+        img = np.append(img, max*np.ones((128 - height, width)), axis=0)
+    if width < 128:
+        img = np.append(img, max*np.ones((128, 128 - width)), axis=1)
 
     img = np.uint8(img)
     # img = cv.resize(img, (128, 128))
@@ -83,13 +71,6 @@ def conv_image_file(filepath, output_path, count):
             value = value << 1
             value += (1 if col == 255 else 0)
             if cc % 8 == 7:
-                with open("log.txt", "w") as f:
-                    # sys.stdout = f
-                    if value != 0:
-                        pass
-                        # print(
-                        # f"Original Value: {value}\t Reversed Value: {reverse(value)}")
-                    # sys.stdout = stdout
                 value = reverse(value)
                 initial_content += "{}".format(value)
                 value = 0
@@ -106,6 +87,5 @@ def conv_image_file(filepath, output_path, count):
 
 if __name__ == "__main__":
     for c, filepath in enumerate(image_paths):
-        # print(filepath)
         conv_image_file("./images/{}".format(filepath),
                         "./out/face_{}.jpg".format(c), c)
