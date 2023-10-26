@@ -68,7 +68,7 @@ void display_test() {
     int col = val[1];
 
     write_string_at("Hindu", 5, line - 104, col + 20);
-    write_string_at_col("Hindu", 5, line - 120, col + 35);
+    write_string_at_col("India", 5, line - 120, col + 35);
 
     get_cursor_pos(val);
     line = val[0];

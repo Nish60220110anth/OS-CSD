@@ -4,7 +4,7 @@ icmake:
 	@cmake -S . -G "Unix Makefiles" -B ./build/ 
 
 clean:
-	@rm --recursive ./build
+	@rm -f --recursive ./src/core/*.out && cd dev && make clean
 
 execute:
 	# @cd ./build && make && ./$(FILE)
@@ -12,6 +12,9 @@ execute:
 
 init:
 	@mkdir  build
+
+whole:
+	cd ./dev/ && bash run.sh
 
 run: init icmake
 
