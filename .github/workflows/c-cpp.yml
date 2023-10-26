@@ -21,7 +21,7 @@ jobs:
          conda install pandas matplotlib opencv pillow
     - name: Run
       run: |
-        make whole
+        make wholeC
     - name: Clean
       run: |
         make clean
