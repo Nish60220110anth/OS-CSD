@@ -68,12 +68,12 @@ void display_test() {
     int col = val[1];
 
     write_string_at("Hindu", 5, line - 104, col + 20);
-    write_string_at_col("India", 5, line - 120, col + 35);
+    write_string_at_col("Bharat", 6, line - 120, col + 35);
 
     get_cursor_pos(val);
     line = val[0];
 
-    set_cursor_pos(line - 48, 0);
+    set_cursor_pos(line - 8, 0);
 
     write_char('\n');
     write_face(font_0);
@@ -91,6 +91,8 @@ void display_test() {
 
     write_char('\t');
     write_string("After Tab", 9);
+
+    display_up();
 }
 
 
