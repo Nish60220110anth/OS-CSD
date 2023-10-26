@@ -54,3 +54,18 @@ The keyboard driver is used to get the input from the user. The keyboard driver 
 1. Get character
 2. Get string (*not implemented yet*)
 3. Support for special keys (*partially implemented*)
+
+
+## How to run keyboard
+
+> Note: each command must run in it's own terminal
+
+1. Run the `os.c` file (`gcc os.c -I . && ./a.out`)
+2. Run the keyboard_adapter (`g++ keyboard.cpp -o main -static && ./main`)
+3. Run the auto (`go build . && ./auto || go run .`)
+
+While closing all applications. The below order is recommended.
+
+1. auto
+2. adapter
+3. os
