@@ -29,8 +29,8 @@ void os_start() {
     minit();
 }
 
+// function to capture data from memory and update the display
 void terminal() {
-    // terminal
     while (true) {
         // get input from keyboard
         char input = keyboard_get_input();
