@@ -12,11 +12,13 @@
 #include "memory.c"
 #include "register.c"
 
-/**
- * \brief Initializes the kernel.
-*/
-void _init() {
-
+void init_memory()
+{
+    for (int i = 0; i < MEMORY_SIZE; i++)
+    {
+        mwrite(0, i);
+    }
 }
+
 
 #endif

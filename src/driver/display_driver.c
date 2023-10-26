@@ -613,14 +613,6 @@ int set_fontmap(char* filename, int len)
     return 0;
 }
 
-void init_memory()
-{
-    for (int i = 0; i < MEMORY_SIZE; i++)
-    {
-        mwrite(0, i);
-    }
-}
-
 void save_memory(char* filename, int len)
 {
     FILE* file = fopen(filename, "w");

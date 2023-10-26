@@ -4,12 +4,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"sync"
 
 	"github.com/fsnotify/fsnotify"
 )
-
-var wg sync.WaitGroup
 
 // func _test() {
 // 	fmt.Println("Started")
@@ -40,20 +37,20 @@ var wg sync.WaitGroup
 // 	fmt.Println(string(out))
 // }
 
-func TestBash() {
-	cmd := exec.Command("bash", "./here.sh")
+// func TestBash() {
+// 	cmd := exec.Command("bash", "./here.sh")
 
-	out, err := cmd.Output()
-	fmt.Println(string(out))
+// 	out, err := cmd.Output()
+// 	fmt.Println(string(out))
 
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-}
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		os.Exit(1)
+// 	}
+// }
 
 func OnChange() {
-	cmd := exec.Command("zsh", "./run.sh")
+	cmd := exec.Command("bash", "./conda_run.sh")
 	out, err := cmd.Output()
 
 	fmt.Println(string(out))

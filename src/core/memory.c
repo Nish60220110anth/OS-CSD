@@ -9,7 +9,6 @@
 #include "global.h"
 #include "memory.h"
 
-char* filename = "memory.txt";
 FILE* fp;
 
 // char => to bits 
@@ -72,4 +71,8 @@ void minit() {
             fwrite(line, sizeof(char), 9, fp);
         }
     }
+}
+
+void mclose() {
+    fclose(fp);
 }

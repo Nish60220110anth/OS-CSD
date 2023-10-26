@@ -10,8 +10,8 @@
 #include <stdbool.h>
 
 #include "global.h"
-#include "memory.c"
 #include "register.c"
+#include "init.c"
 
 #include "../faces/face_0.h"
 #include "../faces/face_1.h"
@@ -31,19 +31,14 @@ void os_start() {
 
 // function to capture data from memory and update the display
 void terminal() {
+    // init_memory();
+    clear_screen();
     while (true) {
         // get input from keyboard
         char input = keyboard_get_input();
-        // if the input is not zero
-        if (input != 0) {
-            // print the input
-            if (input == '\n' || input == CTRL_CODE_ENTER) {
-                write_char('\n');
-            }
-            else {
-                write_char(input);
-            }
-        }
+        printf("got input: %c\n", input);
+
+        write_char(input);
     }
 }
 
@@ -90,7 +85,7 @@ void display_test() {
     write_char(CTRL_CODE_BACKSPACE);
 
     write_char('\t');
-    write_string("After Tab", 9);
+    write_string("After Tah", 9);
 
     // display_down();
     // display_down();
@@ -102,8 +97,8 @@ void display_test() {
 
 int main() {
     os_start();
-    display_test();
-    // terminal();
+    // display_test();
+    terminal();
     return 0;
 }
 
