@@ -4,7 +4,7 @@ icmake:
 	@cmake -S . -G "Unix Makefiles" -B ./build/ 
 
 clean:
-	@rm -f --recursive ./src/core/*.out && cd dev && make clean
+	@rm --recursive ./build
 
 execute:
 	# @cd ./build && make && ./$(FILE)
@@ -12,9 +12,6 @@ execute:
 
 init:
 	@mkdir  build
-
-whole:
-	cd ./dev/ && bash run.sh
 
 run: init icmake
 
@@ -24,3 +21,5 @@ run: init icmake
 ## cd ../../src/core && gcc os.c && ./a.out && 
 ## cp memory.txt ./../../dev/mem_vis && cd ../../dev/mem_vis && 
 ## g++ mem_vis.cpp && ./a.out && cd ../script && python mem_conv.py
+
+## cd ../../src/core && gcc os.c && ./a.out && cp memory.txt ./../../dev/mem_vis && cd ../../dev/mem_vis && g++ mem_vis.cpp && ./a.out && cd ../script && python mem_conv.py

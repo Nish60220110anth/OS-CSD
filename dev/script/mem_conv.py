@@ -28,9 +28,27 @@ image = Image.new('L', (width, height))
 
 pixels = [text_to_grayscale(line) for line in lines]
 flattened_data = [pixel for row in pixels for pixel in row]
+# image.putdata(flattened_data)
+# To avoid the error: TypeError: too many data entries
+# we use the below method
+# remove uniform rows using mod so that the final size is width*height
+l = len(flattened_data)
+reql = width*height
+r = l//reql
+# flattened_data = [e for i, e in enumerate(flattened_data) if i%r == 0]
+# if len(flattened_data) > width*height:
+#     print('ERROR: ', len(flattened_data), width*height)
+#     flattened_data = flattened_data[:width*height]
 image.putdata(flattened_data)
+# But this will not show the complete image
+# So we need to increase the size of the image
+# We can do this by increasing the height of the image
+
+
+
 
 # Save the grayscale image
 image.save(output_image)
 
-print(f"Grayscale image saved to {output_image}")
+# print(f"Grayscale image saved to {output_image}")
+print("Grayscale image saved to {}".format(output_image))
