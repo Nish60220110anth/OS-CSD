@@ -17,8 +17,8 @@
 #include "../faces/face_1.h"
 #include "../faces/face_2.h"
 
-#include "../driver/keyboard_driver.c"
-#include "../driver/display_driver.c"
+// #include "../driver/display_driver.c"
+#include "../games/tic_tac_toe.c"
 
 /**
  * Start the OS
@@ -29,16 +29,49 @@ void os_start() {
     minit();
 }
 
+void display_1() {
+    write_string("Inside display 1\n", 17);
+    write_face(font_0);
+}
+
 // function to capture data from memory and update the display
 void terminal() {
     // init_memory();
     clear_screen();
+    bool ok = false;
+    write_string("Terminal Started\n", 17);
     while (true) {
         // get input from keyboard
         char input = keyboard_get_input();
         printf("got input: %c\n", input);
 
+        if (ok) clear_screen(), ok = false;
+
         write_char(input);
+
+        if (input == 'd') {
+            clear_screen();
+            write_string("Sample display\n", 15);
+            display_1();
+            write_string("Terminal closed", 15);
+
+            ok = true;
+        }
+        else if (input == 'e') {
+            clear_screen();
+            tic_tac_toe(0);
+            ok = true;
+        }
+        else if (input == 'm') {
+            clear_screen();
+            tic_tac_toe(1);
+            ok = true;
+        }
+        else if (input == 'h') {
+            clear_screen();
+            tic_tac_toe(2);
+            ok = true;
+        }
     }
 }
 
@@ -90,7 +123,7 @@ void display_test() {
     // display_down();
     // display_down();
     // display_down();
-    display_up();
+    // display_up();
 }
 
 

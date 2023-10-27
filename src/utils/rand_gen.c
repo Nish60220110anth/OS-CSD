@@ -1,4 +1,4 @@
-#include "rand_gen.h"
+#include <stdint.h>
 
 int rand_lfsr;
 int rand_bit;
@@ -14,5 +14,5 @@ int rand() {
     rand_bit = ((rand_lfsr >> 0) ^ (rand_lfsr >> 2) ^ (rand_lfsr >> 3) ^ (rand_lfsr >> 5)) & 1;
     rand_lfsr = (rand_lfsr >> 1) | (rand_bit << 15);
 
-    return rand_lfsr%100;
+    return rand_lfsr % 100;
 }

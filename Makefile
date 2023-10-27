@@ -21,6 +21,14 @@ wholeP:
 
 run: init icmake
 
+runOS:
+	cd ./src/core && gcc ./os.c -I . && ./a.out
+
+runWhole: runOS wholeC
+
+runAdap:
+	cd ./dev/keyboard_adapter && g++ ./keyboard.cpp -o main && ./main
+
 ## to run os.c and display the memory_out.txt ( run inside dev/somefolder )
 
 
