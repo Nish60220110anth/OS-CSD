@@ -10,6 +10,7 @@
 
 #include "global.h"
 
+char* filename = "memory.txt";
 // don't use this directly, use the macros below
 char memory[MEMORY_SIZE];
 

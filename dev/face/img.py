@@ -13,8 +13,9 @@ def conv_image_file(filepath, output_path, count):
     img = cv.imread(filepath, cv.IMREAD_GRAYSCALE)
     # change size of image preserving aspec ratio
 
-    # calculate mode in the np array
+    containsone = filepath.find("1") != -1
 
+    # calculate mode in the np array
     max = 0
     dict = {}
 
@@ -48,8 +49,9 @@ def conv_image_file(filepath, output_path, count):
     # img = cv.GaussianBlur(img, (3, 3), 0)
 
     img = cv.Canny(img, 40, 200)
-    ret, img = cv.threshold(img, 100, 255, cv.THRESH_BINARY, img)
-    # img = cv.bitwise_not(img)
+    _, img = cv.threshold(img, 100, 255, cv.THRESH_BINARY, img)
+    if containsone:
+        img = cv.bitwise_not(img)
     cv.imwrite(output_path, img)
 
     content = np.array(img)

@@ -13,6 +13,12 @@ execute:
 init:
 	@mkdir  build
 
+wholeC:
+	cd ./dev/ && bash conda_run.sh
+
+wholeP:
+	cd ./dev/ && bash python_run.sh
+
 run: init icmake
 
 ## to run os.c and display the memory_out.txt ( run inside dev/somefolder )

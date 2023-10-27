@@ -18,10 +18,10 @@ jobs:
         sudo apt-get install -y make
     - name: Install python deps
       run: |
-         conda install pandas matplotlib opencv pillow
+         conda install -y pandas matplotlib opencv pillow
     - name: Run
       run: |
-        make whole
+        make wholeC
     - name: Clean
       run: |
         make clean

@@ -31,10 +31,15 @@ char keyboard_get_input() {
     char input = 0;
     bool can_break = false;
 
+    // printf("Keyboard start: %d\n", IO_KEYBOARD_START);
+
     while (true) {
         can_break = false;
 
+        mclose();
+        minit();
         char f = mread_char(IO_KEYBOARD_START);
+        // printf("Keyboard input: %c\n", f);
         if (f != 0) {
             input = f;
             mwrite(0, IO_KEYBOARD_START);
@@ -48,12 +53,11 @@ char keyboard_get_input() {
         }
     }
 
+    // mclose();
     return input;
 }
 
-char* convert_keyinput_to_string(char input) {
-    char out[4];
-
+void convert_keyinput_to_string(char input, char* out) {
     switch (input) {
     case CTRL_CODE_ENTER: {
         // ENTR
@@ -84,8 +88,6 @@ char* convert_keyinput_to_string(char input) {
         out[1] = '\0';
     }
     }
-
-    return out;
 }
 
 char manipulate_input(char c) {
