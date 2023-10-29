@@ -29,6 +29,9 @@ runWhole: runOS wholeC
 runAdap:
 	cd ./dev/keyboard_adapter && g++ ./keyboard.cpp -o main && ./main
 
+runAuto:
+	cd ./dev/auto && go run .
+
 ## to run os.c and display the memory_out.txt ( run inside dev/somefolder )
 
 

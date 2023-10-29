@@ -58,6 +58,7 @@ int focus_mode_col = 0;
 int write_char(char c);
 int write_char_at(char c, int line, int col);
 void save_screen();
+int write_int(int a);
 
 /**
  * @brief write string array in to the display location currently at.
@@ -109,6 +110,25 @@ int write_string_at(char* msg, int len, int line, int col)
         }
     }
     return 0;
+}
+
+int write_int(int a) {
+    if (SCREEN_LOCK == 0) {
+        char temp[10];
+        int count = 0;
+        while (a > 0) {
+            temp[count++] = (a % 10) + '0';
+            a /= 10;
+        }
+
+        for (int i = count - 1;i >= 0;i--) {
+            write_char(temp[i]);
+        }
+
+        return 0;
+    }
+
+    return 1;
 }
 
 int set_cursor_pos(int line, int col)
