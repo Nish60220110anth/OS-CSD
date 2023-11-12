@@ -1,5 +1,6 @@
 .vscode
 .useless
+*.ignore
 # Prerequisites
 *.d
 

@@ -22,6 +22,7 @@ for root, dirs, files in os.walk("src"):
 
             # Replace enums
             file_content = file_content.replace("SUCCESS", "0")
+            file_content = file_content.replace("#endif", "0")
             # Add other enum replacements here
             # An enum is a variable that is completely written in capital letters, and is of size >= 4
             file_content = re.sub(r'([A-Z_]{4,})', r'"\1"', file_content)
@@ -30,6 +31,7 @@ for root, dirs, files in os.walk("src"):
             # This is a simple replacement and might not cover all cases
             file_content = re.sub(r'#include[ ]*<.*>', '', file_content)
             file_content = re.sub(r'#include[ ]*".*"', '', file_content)
+            file_content = re.sub(r'#ifndef.*', '', file_content)
             # file_content = file_content.replace("#ifndef", "")
 
             # Append the file content to the mono repo content
@@ -62,7 +64,9 @@ for root, dirs, files in os.walk("src"):
                 file_content = file_content.replace(match.group(0), "")
 
                 # Append the function prototype to the mono repo content at the start
-                mono_repo_content = match.group(0).replace('\n{', '').replace(' {', '') + ";\n" + mono_repo_content
+                mono_repo_content = match.group(0) + ";\n" + mono_repo_content
+# mono_repo_content = mono_repo_content.replace('{;', ';' )
+mono_repo_content = re.sub(r'(.|\n)\{;', ';', mono_repo_content)
 
 
 
