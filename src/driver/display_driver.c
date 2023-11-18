@@ -4,26 +4,28 @@
 #include <stdbool.h>
 
 /**
- * 1024 X 1024 bits
+ * Memory size is 200kB
  *
- * 128 (CHARS) X 64
+ * 1024 X 800 bits
  *
- * 128 characters row wise
- * 64 characters column wise
+ * 80 (CHARS) X 60
+ *
+ * 80 characters row wise
+ * 60 characters column wise
  *
  * IO_DISPLAY_START = 0
  * display_start = 0
- * IO_DISPLAY_SIZE = 65536 lines (size of display io in bits map divided by 8)
- * display_end = 65536
- * keyboard_start = 65537
+ * IO_DISPLAY_SIZE = 38400 lines (size of display io in bits map divided by 8)
+ * display_end = 38400
+ * keyboard_start = 38401
  *
- * 128 X 64 X 8 bits = 65536 bits
+ * 80 X 60 X 8 bits = 38400 bits
  *
- * Memory size: 256 kB
+ * Memory size: 200 kB
  *
- *  display => 64kB
+ *  display => 38kB
  *  fontmap => 2kB
- *  temp    => 25kB
+ *  temp    => 10kB
  *
  * Fontmap:
  *  128 -> 1kilo byte
@@ -38,8 +40,10 @@
 #include "keyboard_driver.c"
 #include "font_map.h"
 
-#define ROW_CHAR_SIZE 128
-#define COLUMN_CHAR_SIZE 64
+#define ROW_CHAR_SIZE 80
+// #define ROW_CHAR_SIZE 128
+#define COLUMN_CHAR_SIZE 60
+// #define COLUMN_CHAR_SIZE 64
 #define SCREEN_LOCK 0x00
 #define MUL_CONS 9
 

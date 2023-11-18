@@ -50,6 +50,7 @@ import (
 // }
 
 func OnChange() {
+	// change to python_run.sh when using codespace
 	cmd := exec.Command("bash", "./conda_run.sh")
 	out, err := cmd.Output()
 

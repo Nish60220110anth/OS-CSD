@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
 
         std::cout << line;
         c++;
-        if (c == 128) {
+        if (c == 80) {
             std::cout << "\n";
             c = 0;
         }

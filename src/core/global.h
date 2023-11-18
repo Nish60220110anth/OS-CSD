@@ -3,28 +3,28 @@
  * 
  * | OS | stack | heap | display io map | keyboard io map | font map | temp |
  * 
- * Total: 256KB
+ * Total: 200KB
  * 
  * OS : 100KB
  * stack: 10KB 
- * heap: 50KB
- * Display io map: 64KB
+ * heap: 40KB
+ * Display io map: 38KB
  * keyboard io map: 1B
  * fontmap: 2KB
- * temp: 38KB
+ * temp: 10KB
 */
 
-#define MEMORY_SIZE 1024 * 256
+#define MEMORY_SIZE 1024 * 200
 #define OS_SIZE 1024 * 100
 #define OS_START 0
 #define OS_END OS_START + OS_SIZE
 #define STACK_SIZE 1024 * 10
 #define STACK_START OS_END
 #define STACK_END STACK_START + STACK_SIZE
-#define HEAP_SIZE 1024 * 50
+#define HEAP_SIZE 1024 * 40
 #define HEAP_START STACK_END
 #define HEAP_END HEAP_START + HEAP_SIZE
-#define IO_DISPLAY_SIZE 1024 * 64
+#define IO_DISPLAY_SIZE 1024 * 38
 #define IO_DISPLAY_START HEAP_END
 #define IO_DISPLAY_END IO_DISPLAY_START + IO_DISPLAY_SIZE
 #define IO_KEYBOARD_SIZE 1
@@ -36,7 +36,7 @@
 #define FONTMAP_SIZE 1024 * 2
 #define FONTMAP_START IO_KEYBOARD_END
 #define FONTMAP_END FONTMAP_START + FONTMAP_SIZE
-#define TEMP_SIZE 1024 * 38
+#define TEMP_SIZE 1024 * 10
 #define TEMP_START FONTMAP_END
 #define TEMP_END TEMP_START + TEMP_SIZE
 
