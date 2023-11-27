@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "global.h"
 #include "register.c"
@@ -25,43 +26,214 @@ void os_start() {
     minit();
 }
 
-void display_1() {
-    write_string("This content is shown from inside the screen\n", 45);
-    write_face(font_0);
-    write_string("\n\n", 2);
+// current path in the OS
+char path[20];
+int path_len = 0;
 
-    write_string("Functionality of the Display:\n", 30);
-    write_string("1. Write a string\n", 18);
-    write_string("2. Write a character\n", 21);
-    write_string("3. Write a face\n", 16);
-    write_string("4. Write a string at a given position\n", 38);
-    write_string("5. Write a character at a given position\n", 41);
-    write_string("6. Set cursor position\n", 23);
-    write_string("7. Get cursor position\n", 23);
-    write_string("8. Clear screen\n", 16);
-    write_string("9. Clear line\n", 14);
-    write_string("10. Print New Line\n", 19);
-    write_string("11. Print Tab\n", 14);
-    write_string("12. Support Backspace\n", 22);
-    write_string("13. Print Form Feed\n", 20);
-    write_string("14. Print Carriage Return\n", 26);
-    write_string("15. Print Integer\n", 18);
+void snake_game() {
+    clear_screen();
+
+    write_string("Welcome to Snake Game\n\n", 23);
+    write_string("Press 'w' to move up\n", 21);
+    write_string("Press 'a' to move left\n", 23);
+    write_string("Press 's' to move down\n", 23);
+    write_string("Press 'd' to move right\n", 24);
+    write_string("Press 'q' to exit game\n", 23);
 
     write_string("\n\n", 2);
-    write_string("The End\n", 8);
-}
 
-void initial_display() {
-    write_string("Welcome to Flex OS\n\n", 20);
-    write_string("Press 'c' to clear screen\n\n", 27);
-    write_string("Press 'd' to display some example content\n\n", 43);
-    write_string("Press 'e' to play tic tac toe with the computer (easy)\n\n", 56);
-    write_string("Press 'm' to play tic tac toe with the computer (medium)\n\n", 58);
-    write_string("Press 'h' to play tic tac toe with the computer (hard)\n\n", 56);
-    write_string("Press 't' to return back to terminal\n\n", 38);
-    write_string("Press 'r' to get random numbers\n\n", 33);
-    write_string("Press 'i' to get integer input\n\n", 32);
-    write_string("Press 'q' to exit terminal\n", 27);
+    write_string("Press any key to start the game\n", 32);
+    // char in = keyboard_get_input();
+
+    // if (in == 'q') {
+    //     return;
+    // }
+
+    clear_screen();
+    write_string("Game Started\n", 13);
+
+    int pos[2];
+    int base_x, base_y;
+    get_cursor_pos(pos);
+    base_x = pos[0];
+    base_y = pos[1];
+
+    int width = 60;
+    int height = 40;
+
+    int score_base_x = base_x + (width - 25);
+    int score_base_y = base_y + 20;
+
+    // snake game size = height * width (200)
+    int snake[height][width]; // 0: background, 1, border, 2: snake, 3: food, 4: snake head
+    int snake_size = 4;
+    int snake_dir = 0; // 0: east, 1: north, 2: west, 3: south
+    int snake_speed = 3; // at each step, the snake moves 1 unit
+    int snake_pos[2] = { 5, 5 }; // row, col relative to the top left corner (0, 0)
+    int snake_food[2] = { 10, 10 }; // row, col relative to the top left corner (0, 0)
+
+    // snake[0][0] = 0;
+    // snake[0][1] = 0;
+
+    // draw the border
+    for (int i = 0;i < height;i++) {
+        for (int j = 0;j < width;j++) {
+            if (i == 0 || i == height - 1 || j == 0 || j == width - 1) {
+                snake[i][j] = 1;
+            }
+            else {
+                snake[i][j] = 0;
+            }
+        }
+    }
+
+    set_seed(5);
+    while (true) {
+        // get input from keyboard
+        char input = keyboard_get_input();
+
+        if (input == 'd') {
+            snake_dir = 0;
+        }
+        else if (input == 'w') {
+            snake_dir = 1;
+        }
+        else if (input == 'a') {
+            snake_dir = 2;
+        }
+        else if (input == 's') {
+            snake_dir = 3;
+        }
+        else if (input == 'q') {
+            break;
+        }
+
+        // calculate food pos using random 
+        int xfood = own_rand() % width;
+        int yfood = own_rand() % height;
+
+        if (xfood == 0) {
+            xfood = 1;
+        }
+        else if (xfood == width - 1) {
+            xfood = width - 2;
+        }
+
+        if (yfood == 0) {
+            yfood = 1;
+        }
+        else if (yfood == height - 1) {
+            yfood = height - 2;
+        }
+
+        snake_food[0] = xfood;
+        snake_food[1] = yfood;
+
+        snake[snake_pos[1]][snake_pos[0]] = 2;
+
+        // update the snake position
+        if (snake_dir == 0) {
+            int xold = snake_pos[0];
+            int yold = snake_pos[1];
+
+            for (int i = 0;i < snake_speed;i++) {
+                xold++;
+                snake[yold][xold] = 2;
+                if (snake[yold][xold] == 1) {
+                    break;
+                }
+            }
+
+            snake_pos[0] = xold;
+            snake_pos[1] = yold;
+        }
+        else if (snake_dir == 1) {
+            snake_pos[1] -= snake_speed;
+            int xold = snake_pos[0];
+            int yold = snake_pos[1];
+
+            for (int i = 0;i < snake_speed;i++) {
+                yold--;
+                snake[yold][xold] = 2;
+                if (snake[yold][xold] == 1) {
+                    break;
+                }
+            }
+
+            snake_pos[0] = xold;
+            snake_pos[1] = yold;
+        }
+        else if (snake_dir == 2) {
+            int xold = snake_pos[0];
+            int yold = snake_pos[1];
+
+            for (int i = 0;i < snake_speed;i++) {
+                xold--;
+                snake[yold][xold] = 2;
+                if (snake[yold][xold] == 1) {
+                    break;
+                }
+            }
+
+            snake_pos[0] = xold;
+            snake_pos[1] = yold;
+        }
+        else if (snake_dir == 3) {
+            int xo = snake_pos[0];
+            int yo = snake_pos[1];
+
+            for (int i = 0;i < snake_speed;i++) {
+                yo++;
+                snake[yo][xo] = 2;
+                if (snake[yo][xo] == 1) {
+                    break;
+                }
+            }
+
+            snake_pos[0] = xo;
+            snake_pos[1] = yo;
+        }
+
+        snake_size++;
+
+        // update the snake
+        snake[snake_pos[1]][snake_pos[0]] = 4;
+        snake[snake_food[1]][snake_food[0]] = 3;
+
+        // check if the snake has hit the border
+        if (snake_pos[0] < 0 || snake_pos[0] >= height || snake_pos[1] < 0 || snake_pos[1] >= width) {
+            break;
+        }
+
+        set_cursor_pos(base_x, base_y);
+
+        for (int i = 0;i < height;i++) {
+            for (int j = 0;j < width;j++) {
+                if (snake[i][j] == 0) {
+                    write_char(' ');
+                }
+                else if (snake[i][j] == 1) {
+                    write_char('#');
+                }
+                else if (snake[i][j] == 2) {
+                    write_char('*');
+                }
+                else if (snake[i][j] == 3) {
+                    write_char('X');
+                }
+                else if (snake[i][j] == 4) {
+                    write_char('O');
+                }
+            }
+            write_char('\n');
+        }
+
+        // write score
+        set_cursor_pos(score_base_y, score_base_x);
+        write_string("Score: ", 7);
+        write_int(snake_size);
+        set_cursor_pos(base_x, base_y);
+    }
 }
 
 void int_input() {
@@ -76,140 +248,160 @@ void int_input() {
     write_char('\n');
 }
 
-// function to capture data from memory and update the display
-void terminal() {
-    // init_memory();
-    clear_screen();
-    initial_display();
-    bool isn = false;
+/**
+ *
+ * flexos:/> [ls| cd <dir> | cat <file> | mkdir <dir> | pwd | clear | exit]
+ *
+ * dir1\
+ *      file1
+ *      file2
+ * dir2\
+ *      file1
+ *      file2
+*/
 
-    while (true) {
-        // get input from keyboard
-        char input = keyboard_get_input();
-        printf("Got input: %c\n", input);
+void set_path(char* new_path, int len) {
+    if (len >= 20) return;
 
-        if (input == 'c') {
-            clear_screen();
-            isn = false;
-        }
-        else if (input == 'd') {
-            display_1();
-            isn = false;
-        }
-        else if (input == 'q') {
-            clear_screen();
-            write_string("Exiting Terminal\n", 17);
-            break;
-        }
-        else if (input == 'e') {
-            tic_tac_toe(0);
-            isn = false;
-        }
-        else if (input == 'm') {
-            tic_tac_toe(1);
-            isn = false;
-        }
-        else if (input == 'h') {
-            tic_tac_toe(2);
-            isn = false;
-        }
-        else if (input == 'i') {
-            int_input();
-        }
-        else if (input == 't') {
-            clear_screen();
-            initial_display();
-            isn = false;
-        }
-        else if (input == 'r') {
-            int seed = 0;
-            int count = 0;
+    for (int i = 0;i < len;i++) {
+        path[i] = new_path[i];
+    }
 
-            write_string("Enter the seed for the random number generator: \n", 49);
-            seed = keyboard_get_int();
-            write_string("Enter the count of random numbers you want: \n", 45);
-            count = keyboard_get_int();
+    path_len = len;
+}
 
-            printf("Seed: %d\n", seed);
-            printf("Count: %d\n", count);
+void print_new_path() {
+    write_char('\n');
+    write_string(path, path_len);
+}
 
-            write_string("The random numbers are: \n\n", 26);
-            set_seed(seed);
+void ls_on_dir1() {
+    write_string("file1 file2", 11);
+}
 
-            for (int i = 0; i < count; i++) {
-                int random = rand();
-                write_char(' ');
-                write_int(i + 1);
-                write_char(' ');
-                write_char(':');
-                write_char(' ');
-                write_int(random);
-                write_char('\n');
-            }
-        }
-        else {
-            if (!isn) {
-                isn = true;
-                write_string("\nCharacter printing\n", 20);
-            }
-            write_char(input);
-        }
+void ls_on_dir2() {
+    write_string("file1 file2", 11);
+}
+
+void cat_on_dir1_file1() {
+    write_string("This is file1 content in dir1", 29);
+}
+
+void cat_on_dir1_file2() {
+    write_string("This is file2 content in dir1", 29);
+}
+
+void cat_on_dir2_file1() {
+    write_string("This is file1 content in dir2", 29);
+}
+
+void cat_on_dir2_file2() {
+    write_string("This is file2 content in dir2", 29);
+}
+
+void clear_path() {
+    for (int i = 0;i < 20;i++) {
+        path[i] = '\0';
     }
 }
 
-
-
-void display_test() {
+void terminal() {
     clear_screen();
-    write_string("Team RISC V1\n\n\n", 16);
-    write_string_at("Welcome to Flex OS\n\n", 20, 24, 0);
+    set_path("flexos:/> ", 11);
+    print_new_path();
 
-    set_cursor_pos(32, 0);
-    write_char('\n');
-    write_string("Namo 2024!\n\n", 12);
-    write_string("India lifts the World Cup after 28 years!", 42);
+    char preinput[20];
+    int len = 0;
 
-    int val[2];
+    while (true) {
+        char input = keyboard_get_input();
 
-    write_char('\n');
-    write_face(font_2);
+        if (input == '.') {
 
-    get_cursor_pos(val);
+            printf("preinput: %s\n", preinput);
 
-    int line = val[0];
-    int col = val[1];
+            if (len == 0) {
+                print_new_path();
+                continue;
+            }
 
-    write_string_at("Hindu", 5, line - 104, col + 20);
-    write_string_at_col("Bharat", 6, line - 112, col + 35);
+            if (preinput[0] == 'l' && preinput[1] == 's') {
+                if (len >= 7 && preinput[3] == 'd' && preinput[4] == 'i' && preinput[5] == 'r' && preinput[6] == '1') {
+                    write_char('\n');
+                    ls_on_dir1();
 
-    get_cursor_pos(val);
-    line = val[0];
+                    set_path("flexos:/> ", 11);
+                    len = 0;
+                    print_new_path();
+                }
+                else if (len >= 7 && preinput[3] == 'd' && preinput[4] == 'i' && preinput[5] == 'r' && preinput[6] == '2') {
+                    write_char('\n');
+                    ls_on_dir2();
 
-    set_cursor_pos(line - 8, 0);
+                    set_path("flexos:/> ", 11);
+                    len = 0;
+                    print_new_path();
+                }
+                else {
+                    write_string("\nInvalid directory\n", 19);
+                }
+            }
+            else if (preinput[0] == 'c' && preinput[1] == 'd') {
+                if (preinput[3] == 'd' && preinput[4] == 'i' && preinput[5] == 'r' && preinput[6] == '1') {
+                    set_path("flexos:dir1/> ", 14);
+                    print_new_path();
+                    len = 0;
+                }
+                else if (preinput[3] == 'd' && preinput[4] == 'i' && preinput[5] == 'r' && preinput[6] == '2') {
+                    set_path("flexos:dir2/> ", 14);
+                    print_new_path();
+                    len = 0;
+                }
+                else if (preinput[3] == '/') {
+                    set_path("flexos:/> ", 11);
+                    print_new_path();
+                    len = 0;
+                }
+                else {
+                    write_string("Invalid directory\n", 18);
+                }
+            }
+            else if (preinput[0] == 'c' && preinput[1] == 'a' && preinput[2] == 't') {
+                write_string("cat\n", 4);
+            }
+            else if (preinput[0] == 'm' && preinput[1] == 'k' && preinput[2] == 'd' && preinput[3] == 'i' && preinput[4] == 'r') {
+                write_string("mkdir\n", 6);
+            }
+            else if (preinput[0] == 'p' && preinput[1] == 'w' && preinput[2] == 'd') {
+                write_string("pwd\n", 4);
+            }
+            else if (preinput[0] == 'e' && preinput[1] == 'x' && preinput[2] == 'i' && preinput[3] == 't') {
+                write_string("exit\n", 5);
+                break;
+            }
+            else if (preinput[0] == 'c' && preinput[1] == 'l' && preinput[2] == 'e' && preinput[3] == 'a' && preinput[4] == 'r') {
+                clear_screen();
+                print_new_path();
+            }
+            else {
+                write_string("\nInvalid command\n", 17);
+                print_new_path();
+                len = 0;
+            }
+        }
+        else {
+            preinput[len] = input;
+            len++;
+            write_char(input);
+        }
+    }
 
-    write_char('\n');
-    write_face(font_0);
-    write_char('\n');
-    write_face(font_1);
-    write_char('\n');
-
-    write_string("Kakkos: \f", 9);
-    get_cursor_pos(val);
-    line = val[0];
-    write_char('\r');
-    write_zero_line(line);
-    write_string("CS 342", 6);
-    write_char(CTRL_CODE_BACKSPACE);
-
-    write_char('\t');
-    write_string("After Tab", 9);
 }
-
-
 
 int main() {
     os_start();
     terminal();
+    // snake_game();
     return 0;
 }
 

@@ -10,8 +10,8 @@ output_image = 'memory.png'
 
 # Read the content from line1 to line2
 # based on output from dev/mem_vis/memory_out.txt
-line1 = 2000  # actual: 1280 but to see clearly we are using 1270
-line2 = 2520  # Adjust this to the desired range
+line1 = 1900  # actual: 1280 but to see clearly we are using 1270
+line2 = 2350  # Adjust this to the desired range
 
 # Read the lines within the specified range
 lines = []

@@ -41,16 +41,13 @@
 #include "font_map.h"
 
 #define ROW_CHAR_SIZE 80
-// #define ROW_CHAR_SIZE 128
+ // #define ROW_CHAR_SIZE 128
 #define COLUMN_CHAR_SIZE 60
 // #define COLUMN_CHAR_SIZE 64
 #define SCREEN_LOCK 0x00
 #define MUL_CONS 9
 
 const int max_com_len = 10; // max command length
-
-// current path in the OS
-char path[128];
 
 int LINE = 0;   // current line (ROW)
 int COLUMN = 0; // current column
@@ -252,6 +249,21 @@ int write_char(char c)
             }
 
             return 0;
+        }
+        else if (c == '_') {
+            COLUMN++;
+
+            if (COLUMN == ROW_CHAR_SIZE)
+            { // if the row is full
+                COLUMN = 0;
+                LINE += 8;
+                if (LINE >= 8 * COLUMN_CHAR_SIZE)
+                {
+                    LINE = 0;
+                    COLUMN = 0;
+                    return 1;
+                }
+            }
         }
         else if (c == '\r')
         {
